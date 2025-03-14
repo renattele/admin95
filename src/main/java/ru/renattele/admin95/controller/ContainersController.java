@@ -31,6 +31,18 @@ public class ContainersController {
         return "containers";
     }
 
+    @PostMapping(value = "/{name}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void createFile(@PathVariable String name) {
+        var fileEntity = FileEntity.builder()
+                .id(name)
+                .name(name)
+                .content("")
+                .build();
+        fileRepository.saveFile(fileEntity);
+    }
+
     @PutMapping(value = "/{name}", consumes = {MediaType.TEXT_PLAIN_VALUE})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -49,9 +61,7 @@ public class ContainersController {
     @DeleteMapping(value = "/{name}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void deleteFile(
-            @PathVariable String name
-    ) {
+    public void deleteFile(@PathVariable String name) {
         fileRepository.deleteFile(name);
     }
 }

@@ -7,7 +7,7 @@
 
 * {
     font-family: 'Comic Sans', serif;
-    color: #fff;
+    color: white;
 }
 
 html {
@@ -78,4 +78,41 @@ main {
     justify-content: center;
     flex-direction: column;
     align-items: center;
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar {
+    width: 16px;
+    background-color: #C0C0C0;
+}
+
+/* Scrollbar Thumb */
+::-webkit-scrollbar-thumb {
+    background: #808080;
+    border-top: 2px solid #FFFFFF;
+    border-left: 2px solid #FFFFFF;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+}
+
+/* Scrollbar Buttons (arrows) */
+::-webkit-scrollbar-button:single-button {
+    background-color: #C0C0C0;
+    border-top: 2px solid #FFFFFF;
+    border-left: 2px solid #FFFFFF;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 16px;
+}
+
+/* Up arrow */
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><polygon points='0,4 8,4 4,0' style='fill: black'/></svg>");
+}
+
+/* Down arrow */
+::-webkit-scrollbar-button:single-button:vertical:increment {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><polygon points='0,0 8,0 4,4' style='fill: black'/></svg>");
 }

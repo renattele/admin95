@@ -4,21 +4,42 @@
     <title>Admin95</title>
 </head>
 <body>
+<link th:href="@{/libs/prism/prism.css}" rel="stylesheet" />
+<script defer th:src="@{/libs/prism/prism.js}"></script>
 <script defer th:inline="javascript" th:if="${currentFile != null}">
+    const successIcon = '[(@{/gifs/check.gif})]';
+    const loadingIcon = '[(@{/gifs/doge.gif})]';
+    const failedIcon = '[(@{/gifs/error_alert.gif})]';
     document.addEventListener('DOMContentLoaded', () => {
         const textEditor = document.getElementById('text-editor');
-        const sendText = debounce(2000, () => {
+        const statusIcon = document.querySelector('#status-icon');
+        statusIcon.src = successIcon;
+        //textEditor.classList.add('language-yaml');
+        //Prism.highlightElement(textEditor);
+        //textEditor.innerHTML = textEditor.value;
+        const sendText = debounce(2000, async () => {
             const text = textEditor.value;
             const endpoint = '[(@{/admin/containers/})]' + [[${currentFile.name}]];
-            fetch(endpoint, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'text/plain',
-                },
-                body: text,
-            });
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                    },
+                    body: text,
+                })
+                if (response.ok) statusIcon.src = successIcon;
+                else statusIcon.src = failedIcon;
+            } catch (e) {
+                console.log(e);
+                statusIcon.src = failedIcon;
+            }
         });
         textEditor.addEventListener('input', () => {
+            if (!statusIcon.src.endsWith(loadingIcon)) {
+                statusIcon.src = loadingIcon;
+            }
+            Prism.highlightElement(textEditor);
             sendText();
         });
 
@@ -34,6 +55,17 @@
                     reload();
                 }
             });
+        });
+
+        const createFileForm = document.getElementById('create-file-form');
+        createFileForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(createFileForm);
+            const endpoint = '[(@{/admin/containers/})]' + formData.get("name");
+            fetch(endpoint, {
+                method: 'POST'
+            });
+            reload();
         });
     })
 </script>
@@ -54,10 +86,18 @@
                 </li>
             </th:block>
         </ul>
+        <form id="create-file-form" method="post" th:action="@{/admin/}">
+            <label>
+                File name:
+                <input type="text" name="name" placeholder="File Name" required>
+            </label>
+            <button type="submit">Create File!</button>
+        </form>
     </aside>
     <form th:if="${currentFile != null}">
         <h3 th:text="${currentFile.name}"></h3>
         <textarea id="text-editor" placeholder="Edit your content here" th:text="${currentFile.content}"></textarea>
+        <img th:src="@{/gifs/doge.gif}" id="status-icon" alt="Sync status Image">
     </form>
 </main>
 <footer th:replace="~{fragments :: footer}"></footer>

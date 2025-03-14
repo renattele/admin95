@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(~{::title}, @{/containers.css})}">
+    <title>Admin95</title>
+</head>
+<body>
+<script defer th:inline="javascript" th:if="${currentFile != null}">
+    document.addEventListener('DOMContentLoaded', () => {
+        const textEditor = document.getElementById('text-editor');
+        const sendText = debounce(2000, () => {
+            const text = textEditor.value;
+            const endpoint = '[(@{/admin/containers/})]' + [[${currentFile.name}]];
+            fetch(endpoint, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: text,
+            });
+        });
+        textEditor.addEventListener('input', () => {
+            sendText();
+        });
+
+        const deleteButtons = document.querySelectorAll('img[role="button"][data-file-id]');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const file = button.getAttribute('data-file-id');
+                const endpoint = '[(@{/admin/containers/})]' + file;
+                if (confirm("Are you sure you want to delete file " + file + "?")) {
+                    fetch(endpoint, {
+                        method: 'DELETE'
+                    });
+                    reload();
+                }
+            });
+        });
+    })
+</script>
+<header th:replace="~{fragments :: header}"></header>
+<h1>Containers</h1>
+<main>
+    <aside>
+        <ul>
+            <th:block th:each="container: ${files}">
+                <li th:aria-selected="${container.equals(currentFile)}">
+                    <a th:href="|@{/admin/containers/}${container.name}|">
+                        <p th:text="${container.name}"></p>
+                    </a>
+                    <img th:src="@{/gifs/trash.gif}"
+                         alt="Trash Image"
+                         th:data-file-id="${container.name}"
+                         role="button">
+                </li>
+            </th:block>
+        </ul>
+    </aside>
+    <form th:if="${currentFile != null}">
+        <h3 th:text="${currentFile.name}"></h3>
+        <textarea id="text-editor" placeholder="Edit your content here" th:text="${currentFile.content}"></textarea>
+    </form>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

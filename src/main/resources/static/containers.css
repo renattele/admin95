@@ -1,0 +1,84 @@
+main {
+    display: flex;
+    flex-direction: row;
+}
+
+@media (max-width: 768px) {
+    main {
+        flex-direction: column;
+    }
+    main form {
+        flex: 1;
+        width: 90%;
+    }
+}
+
+main form {
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+main form textarea {
+    width: 90%;
+    height: 50vh;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 16px ridge white;
+    resize: none;
+    scrollbar-width: none;
+    font-size: 14pt;
+    padding: 8px;
+}
+
+aside {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+aside ul {
+    padding: 0;
+}
+
+main aside li {
+    list-style: none;
+    position: relative;
+    padding-left: 32px; /* Make room for the custom bullet */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+main aside li img {
+    width: 24px;
+    height: 36px;
+    transform: translateY(-20%); /* Needed because trash can is offset  */
+    cursor: pointer;
+}
+
+main aside li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 24px;
+    width: 24px;
+    background-image: url('/gifs/arrow10.gif');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+main aside li[aria-selected=true] {
+    font-weight: bold;
+}
+
+h1 {
+    text-align: center;
+}

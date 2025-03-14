@@ -1,0 +1,81 @@
+@font-face {
+    font-family: 'Comic Sans';
+    src: url('/comic-sans.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'Comic Sans', serif;
+    color: #fff;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    background-image: url('/gifs/stars.gif');
+    background-repeat: repeat;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header nav {
+    width: 80%;
+    display: flex;
+    text-align: center;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+header nav a {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+header nav img {
+    width: 50px;
+    height: 50px;
+}
+
+footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+footer p {
+    display: flex;
+    align-items: center;
+    margin: 12px;
+    column-gap: 8px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+    justify-content: center;
+}
+
+
+figure figcaption {
+    text-align: center;
+}
+
+main {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}

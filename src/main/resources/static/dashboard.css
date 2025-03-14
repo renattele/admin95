@@ -1,0 +1,14 @@
+main {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+main h1 {
+    flex: 0 0 100%;
+    text-align: center;
+}
+
+main img {
+    height: 400px;
+}

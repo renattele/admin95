@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments :: head(~{::title}, @{/dashboard.css})}">
+    <title>Dashboard</title>
+</head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main>
+    <h1>Dashboard</h1>
+    <figure>
+        <img th:src="*{CPU_TEMPERATURE_URL}" alt="CPU Temperature Image">
+        <figcaption>CPU Temperature</figcaption>
+    </figure>
+    <figure>
+        <img th:src="*{CPU_USAGE_URL}" alt="CPU Usage Image">
+        <figcaption>CPU Usage</figcaption>
+    </figure>
+    <figure>
+        <img th:src="*{RAM_URL}" alt="RAM Usage Image">
+        <figcaption>RAM Usage</figcaption>
+    </figure>
+    <figure>
+        <img th:src="*{DISK_URL}" alt="Disk Usage Image">
+        <figcaption>Disk Usage</figcaption>
+    </figure>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

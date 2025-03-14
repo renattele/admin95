@@ -1,0 +1,56 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:fragment="head(title, style)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0"/>
+    <title th:replace="${title}">99999</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="${style}">
+    <script th:src="@{/script.js}"></script>
+</head>
+<body>
+<header th:fragment="header">
+    <a th:href="@{/}"><img width="300" th:src="@{/gifs/logo.gif}" alt="Burning Admin95 logo"></a>
+    <nav>
+        <a th:href="@{/admin/dashboard}">
+            <img th:src="@{/gifs/chart.gif}" alt="Chart Image">
+            <p>Dashboard</p>
+        </a>
+        <a th:href="@{/admin/containers}">
+            <img th:src="@{/gifs/whale.gif}" alt="Whale Image">
+            <p>Containers</p>
+        </a>
+        <a th:href="@{/admin/terminal}">
+            <img th:src="@{/gifs/terminal.gif}" alt="Terminal Image">
+            <p>Terminal</p>
+        </a>
+        <a th:href="@{/admin/backups}">
+            <img th:src="@{/gifs/zip.gif}" alt="Zip Image">
+            <p>Backups</p>
+        </a>
+        <a th:href="@{/admin/admins}">
+            <img th:src="@{/gifs/admin.gif}" alt="Hello Kitty Image">
+            <p>Admins</p>
+        </a>
+        <a th:href="@{/logout}">
+            <img th:src="@{/gifs/logout.gif}" alt="Leave Image">
+            <p>Logout</p>
+        </a>
+    </nav>
+</header>
+<footer th:fragment="footer">
+    <img th:src="@{/gifs/divider.gif}" alt="Divider Image" style="width: 100%">
+    <p>
+        <img th:src="@{/gifs/badges/anybrowser3.gif}" alt="Viewable in ANY browser">
+        <img th:src="@{/gifs/badges/800x600_red.gif}" alt="800x600 Image">
+        <img th:src="@{/gifs/badges/8bit.gif}" alt="8 bit Image">
+        <img th:src="@{/gifs/badges/aol-sucks.gif}" alt="AOL Sucks Image">
+        <img th:src="@{/gifs/badges/bu12.gif}" alt="This website Image">
+        <img th:src="@{/gifs/badges/cfs.gif}" alt="Completely free software Image">
+    </p>
+    <p>
+        <img th:src="@{/gifs/hacker.gif}" alt="Hacker Image">
+        <b>Built with <a href="https://spring.io">Spring</a></b>
+    </p>
+</footer>
+</body>
+</html>

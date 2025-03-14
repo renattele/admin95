@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/automania
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12345678
+    depends_on:
+      - db
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  db:
+    image: 'postgres:latest'
+    env_file: .sample.env
+    ports:
+      - '5432:5432'
+
+  s3:
+    image: minio/minio
+    command: minio server /data
+    env_file: .sample.env
+    ports:
+      - "9000:9000"
+    volumes:
+      - s3:/data
+
+  webssh:
+    image: wettyoss/wetty
+    ports:
+      - "3000:3000"
+    command: "--ssh-host=192.168.0.101 --allow-iframe=true --base=/admin/wetty"
+
+volumes:
+  s3:
+  db:

@@ -12,3 +12,8 @@ function debounce(timeoutMs, callee) {
 function reload() {
     window.location.reload();
 }
+
+
+const confirmDeletion = (object) => {
+    return window.confirm(`Are you sure you want to delete ${object}?`);
+}

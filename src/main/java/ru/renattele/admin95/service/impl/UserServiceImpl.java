@@ -16,7 +16,6 @@ import ru.renattele.admin95.service.UserService;
 
 import java.util.List;
 
-@Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -63,8 +62,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userRepository.findByNameEquals(username);
-        System.out.println(username);
-        System.out.println(user);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }

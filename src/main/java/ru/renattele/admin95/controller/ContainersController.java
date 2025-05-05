@@ -2,66 +2,119 @@ package ru.renattele.admin95.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.renattele.admin95.api.ContainersApi;
+import ru.renattele.admin95.exception.ResourceNotFoundException;
 import ru.renattele.admin95.model.FileEntity;
 import ru.renattele.admin95.repository.FileRepository;
+import ru.renattele.admin95.service.TagsService;
+import ru.renattele.admin95.service.docker.DockerLifecycleService;
+import ru.renattele.admin95.service.docker.DockerProjectManagementService;
+import ru.renattele.admin95.service.docker.DockerProjectQueryService;
 
 @Controller
-@RequestMapping("/admin/containers")
 @RequiredArgsConstructor
-public class ContainersController {
+public class ContainersController implements ContainersApi {
     private final FileRepository fileRepository;
+    private final DockerLifecycleService dockerLifecycleService;
+    private final DockerProjectManagementService dockerProjectManagementService;
+    private final DockerProjectQueryService dockerProjectQueryService;
+    private final TagsService tagsService;
 
-    @GetMapping(value = {"/{name}", ""})
-    public String dashboard(
-            @PathVariable(required = false) String name,
+    @Override
+    public String containers(
+            String name,
             Model model
     ) {
-        var files = fileRepository.getFiles();
-        var currentFile = files.stream()
+        var allFiles = fileRepository.getFiles();
+        var currentFile = allFiles.stream()
                 .filter(file -> file.getName().equals(name))
                 .findFirst()
-                .orElse(null);
-        model.addAttribute("files", files);
+                .orElseGet(() -> {
+                    var dockerProject = dockerProjectQueryService.getProjectByName(name);
+                    if (dockerProject == null) {
+                        return null;
+                    }
+                    var details = dockerProjectQueryService.getProjectDetails(dockerProject);
+                    return FileEntity.builder()
+                            .name(dockerProject.getName())
+                            .content(details.getContent())
+                            .build();
+                });
+        var dockerProjects = dockerProjectQueryService.getProjects();
+        var currentDockerProject = dockerProjectQueryService.getProjectByName(name);
+        var projectLogs = currentDockerProject != null ? dockerProjectQueryService.logsForProject(currentDockerProject)
+                : null;
+        var tags = currentDockerProject != null ? tagsService.suggestedTagsFor(currentDockerProject) : null;
+        model.addAttribute("files", allFiles);
+        model.addAttribute("dockerProjects", dockerProjects);
         model.addAttribute("currentFile", currentFile);
+        model.addAttribute("currentDockerProject", currentDockerProject);
+        model.addAttribute("currentDockerProjectLogs", projectLogs);
+        model.addAttribute("tags", tags);
         return "containers";
     }
 
-    @PostMapping(value = "/{name}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void createFile(@PathVariable String name) {
-        var fileEntity = FileEntity.builder()
-                .id(name)
-                .name(name)
-                .content("")
-                .build();
-        fileRepository.saveFile(fileEntity);
+    @Override
+    public void createProject(String name) {
+        dockerProjectManagementService.createProject(name);
     }
 
-    @PutMapping(value = "/{name}", consumes = {MediaType.TEXT_PLAIN_VALUE})
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void saveFile(
-            @PathVariable String name,
-            @RequestBody String body
+    @Override
+    public void createFile(String name) {
+        fileRepository.saveFile(FileEntity.builder().name(name).build());
+    }
+
+    @Override
+    public void startProject(String name) {
+        var project = dockerProjectQueryService.getProjectByName(name);
+        if (project == null) throw new ResourceNotFoundException();
+        dockerLifecycleService.startProject(project);
+    }
+
+    @Override
+    public void stopProject(String name) {
+        var project = dockerProjectQueryService.getProjectByName(name);
+        if (project == null) throw new ResourceNotFoundException();
+        dockerLifecycleService.stopProject(project);
+    }
+
+    @Override
+    public ResponseEntity<String> saveFile(
+            String name,
+            SaveFileRequest rawBody
     ) {
-        var fileEntity = FileEntity.builder()
-                .id(name)
-                .name(name)
-                .content(body)
-                .build();
-        fileRepository.saveFile(fileEntity);
+        var body = rawBody != null ? rawBody : new SaveFileRequest("", "");
+        var project = dockerProjectQueryService.getProjectByName(name);
+        if (project == null) {
+            var file = fileRepository.getFile(name);
+            if (file != null) {
+                file.setContent(body.content());
+                fileRepository.saveFile(file);
+                return ResponseEntity.ok().build();
+            }
+            return ResponseEntity.notFound().build();
+        }
+        var projectDetails = dockerProjectQueryService.getProjectDetails(project);
+        projectDetails.setContent(body.content());
+        project.setLink(body.link());
+        dockerProjectManagementService.updateProject(project);
+        dockerProjectManagementService.updateProjectDetails(projectDetails);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(value = "/{name}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void deleteFile(@PathVariable String name) {
-        fileRepository.deleteFile(name);
+    @Override
+    public ResponseEntity<String> deleteFile(String name) {
+        if (!fileRepository.deleteFile(name)) {
+            var project = dockerProjectQueryService.getProjectByName(name);
+            if (project == null) {
+                return ResponseEntity.notFound().build();
+            }
+            dockerProjectManagementService.removeProject(project);
+        }
+        return ResponseEntity.ok().build();
     }
 }

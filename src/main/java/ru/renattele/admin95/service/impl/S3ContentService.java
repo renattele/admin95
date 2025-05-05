@@ -16,16 +16,16 @@ import java.util.UUID;
 public class S3ContentService implements ContentService {
     private MinioClient client;
 
-    @Value("${S3_ENDPOINT}")
+    @Value("${s3.endpoint}")
     private String endpoint;
 
-    @Value("${S3_ACCESS_KEY}")
+    @Value("${s3.access-key}")
     private String accessKey;
 
-    @Value("${S3_SECRET_KEY}")
+    @Value("${s3.secret-key}")
     private String secretKey;
 
-    @Value("${S3_BUCKET}")
+    @Value("${s3.bucket}")
     private String bucket;
 
     @PostConstruct

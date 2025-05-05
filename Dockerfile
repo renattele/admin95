@@ -11,5 +11,4 @@ COPY src /app/src
 RUN ./gradlew build --no-daemon
 EXPOSE 8080
 
-
 ENTRYPOINT ["./gradlew", "bootRun"]

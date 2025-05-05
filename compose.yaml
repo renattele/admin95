@@ -30,7 +30,7 @@ services:
   webssh:
     image: wettyoss/wetty
     ports:
-      - "3000:3000"
+      - "3033:3000"
     command: "--ssh-host=192.168.0.101 --allow-iframe=true --base=/admin/wetty"
 
 volumes:

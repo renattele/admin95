@@ -4,29 +4,31 @@
     <title>Admin95</title>
 </head>
 <body>
-<link th:href="@{/libs/prism/prism.css}" rel="stylesheet" />
-<script defer th:src="@{/libs/prism/prism.js}"></script>
 <script defer th:inline="javascript" th:if="${currentFile != null}">
     const successIcon = '[(@{/gifs/check.gif})]';
     const loadingIcon = '[(@{/gifs/doge.gif})]';
     const failedIcon = '[(@{/gifs/error_alert.gif})]';
+
     document.addEventListener('DOMContentLoaded', () => {
         const textEditor = document.getElementById('text-editor');
+        const linkEditor = document.getElementById('input-service-link');
         const statusIcon = document.querySelector('#status-icon');
         statusIcon.src = successIcon;
-        //textEditor.classList.add('language-yaml');
-        //Prism.highlightElement(textEditor);
-        //textEditor.innerHTML = textEditor.value;
-        const sendText = debounce(2000, async () => {
+        const sendUpdateRequest = debounce(2000, async () => {
             const text = textEditor.value;
+            const link = linkEditor.value;
+            const data = {
+                "link": link,
+                "content": text
+            };
             const endpoint = '[(@{/admin/containers/})]' + [[${currentFile.name}]];
             try {
                 const response = await fetch(endpoint, {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'text/plain',
+                        'Content-Type': 'application/json'
                     },
-                    body: text,
+                    body: JSON.stringify(data),
                 })
                 if (response.ok) statusIcon.src = successIcon;
                 else statusIcon.src = failedIcon;
@@ -35,69 +37,249 @@
                 statusIcon.src = failedIcon;
             }
         });
-        textEditor.addEventListener('input', () => {
+        const updateData = () => {
             if (!statusIcon.src.endsWith(loadingIcon)) {
                 statusIcon.src = loadingIcon;
             }
-            Prism.highlightElement(textEditor);
-            sendText();
+            sendUpdateRequest();
+        }
+        textEditor.addEventListener('input', () => {
+            updateData();
+        });
+        linkEditor.addEventListener('input', () => {
+            updateData();
+        });
+        textEditor.addEventListener('keydown', function (e) {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+
+                this.value = this.value.substring(0, start) +
+                    "\t" + this.value.substring(end);
+
+                this.selectionStart =
+                    this.selectionEnd = start + 1;
+            }
+        });
+        const editForm = document.getElementById('edit-form');
+        editForm.addEventListener('submit', (event) => {
+            event.preventDefault();
         });
 
-        const deleteButtons = document.querySelectorAll('img[role="button"][data-file-id]');
+        const removeTagButtons = document.querySelectorAll('img[data-action="delete"][data-tag-id]');
+        removeTagButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tag = button.getAttribute('data-tag-id');
+                const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/remove';
+                fetch(endpoint, {
+                    method: 'PATCH'
+                }).then(reload);
+            });
+        });
+
+        const deletePermanentlyTagButtons = document.querySelectorAll('img[data-action="delete-permanently"][data-tag-id]');
+        deletePermanentlyTagButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const tag = button.getAttribute('data-tag-id');
+                const message = "Are you sure you want to delete the tag '" + tag + "' permanently?" +
+                    " This will delete tag from all services"
+                if (confirm(message)) {
+                    const endpoint = '[(@{/admin/tags/})]' + tag;
+                    fetch(endpoint, {
+                        method: 'DELETE'
+                    }).then(reload);
+                }
+            });
+        });
+
+        const addTagButtons = document.querySelectorAll('li[data-action="add"][data-tag-id]');
+        addTagButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tag = button.getAttribute('data-tag-id');
+                const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/add';
+                fetch(endpoint, {
+                    method: 'PATCH'
+                }).then(reload);
+            });
+        });
+
+        const addTagEditor = document.getElementById('input-new-tag');
+        const addTagButton = document.getElementById('button-add-tag');
+        addTagButton.addEventListener('click', () => {
+            const tag = addTagEditor.value;
+            if (tag.length > 0) {
+                const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/add';
+                fetch(endpoint, {
+                    method: 'PATCH'
+                }).then(reload);
+            }
+        });
+    });
+</script>
+<script defer th:inline="javascript">
+    const projectRunningIcon = '[(@{/gifs/stopw.gif})]';
+    const projectStoppedIcon = '[(@{/gifs/Play1.gif})]';
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('img[data-action="delete"][data-file-id]');
         deleteButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const file = button.getAttribute('data-file-id');
-                const endpoint = '[(@{/admin/containers/})]' + file;
-                if (confirm("Are you sure you want to delete file " + file + "?")) {
+                if (confirmDeletion(file)) {
+                    const endpoint = '[(@{/admin/containers/})]' + file;
                     fetch(endpoint, {
                         method: 'DELETE'
-                    });
-                    reload();
+                    }).then(reload);
                 }
             });
+        });
+
+        const controlButtons = document.querySelectorAll('img[data-action="control"][data-file-id]');
+        controlButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const file = button.getAttribute('data-file-id');
+                const action = button.src.endsWith(projectRunningIcon) ? 'stop' : 'start';
+                const endpoint = '[(@{/admin/containers/})]' + file + '/' + action;
+                fetch(endpoint, {
+                    method: 'POST'
+                }).then(reload);
+            });
+        });
+
+        const createServiceForm = document.getElementById('create-service-form');
+        createServiceForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(createServiceForm);
+            const endpoint = '[(@{/admin/containers/service/})]' + formData.get("name");
+            fetch(endpoint, {
+                method: 'POST'
+            }).then(reload);
         });
 
         const createFileForm = document.getElementById('create-file-form');
         createFileForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const formData = new FormData(createFileForm);
-            const endpoint = '[(@{/admin/containers/})]' + formData.get("name");
+            const endpoint = '[(@{/admin/containers/file/})]' + formData.get("name");
             fetch(endpoint, {
                 method: 'POST'
-            });
-            reload();
+            }).then(reload);
         });
-    })
+    });
 </script>
 <header th:replace="~{fragments :: header}"></header>
-<h1>Containers</h1>
+<h1 th:if="${currentFile == null}">Containers</h1>
+<h1 th:if="${currentFile != null}">
+    <label>
+        <th:block th:text="${currentFile.name}"/>
+    </label>
+    <img th:src="@{/gifs/doge.gif}" id="status-icon" alt="Sync status Image">
+</h1>
 <main>
     <aside>
-        <ul>
-            <th:block th:each="container: ${files}">
-                <li th:aria-selected="${container.equals(currentFile)}">
-                    <a th:href="|@{/admin/containers/}${container.name}|">
-                        <p th:text="${container.name}"></p>
+        <ul id="containers-list">
+            <th:block th:each="project: ${dockerProjects}">
+                <li th:aria-selected="${project.name.equals(currentFile != null ? currentFile.name : '')}">
+                    <!-- needed to use string enum because accessing it directly (currently) does not work -->
+                    <img th:src="|@{/gifs/}${project.state.toString().equals('RUNNING') ? 'stopw.gif' : 'Play1.gif'}|"
+                         alt="Play/Pause Image"
+                         th:data-file-id="${project.name}"
+                         data-action="control"
+                         role="button">
+                    <a th:href="|@{/admin/containers/}${project.name}|">
+                        <p th:text="${project.name}"></p>
                     </a>
                     <img th:src="@{/gifs/trash.gif}"
                          alt="Trash Image"
-                         th:data-file-id="${container.name}"
+                         th:data-file-id="${project.name}"
+                         data-action="delete"
+                         role="button">
+                    <a th:if="${project.link != null && !project.link.isEmpty()}"
+                       th:href="${project.link}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img th:src="@{/gifs/globe.gif}"
+                             alt="Globe Image"
+                             th:data-file-id="${project.name}"
+                             data-action="link"
+                             role="button"
+                        >
+                    </a>
+                </li>
+            </th:block>
+            <form id="create-service-form" method="post" th:action="@{/admin/containers/}">
+                <label>
+                    Service name:
+                    <input type="text" name="name" placeholder="Service name" required>
+                </label>
+                <button type="submit">Create Service!</button>
+            </form>
+            <hr>
+        </ul>
+        <ul id="files-list">
+            <th:block th:each="file: ${files}">
+                <li th:aria-selected="${file.equals(currentFile)}">
+                    <a th:href="|@{/admin/containers/}${file.name}|">
+                        <p th:text="${file.name}"></p>
+                    </a>
+                    <img th:src="@{/gifs/trash.gif}"
+                         alt="Trash Image"
+                         data-action="delete"
                          role="button">
                 </li>
             </th:block>
         </ul>
-        <form id="create-file-form" method="post" th:action="@{/admin/}">
+        <form id="create-file-form" method="post" th:action="@{/admin/containers/}">
             <label>
                 File name:
-                <input type="text" name="name" placeholder="File Name" required>
+                <input type="text" name="name" placeholder="File name" required>
             </label>
             <button type="submit">Create File!</button>
         </form>
     </aside>
-    <form th:if="${currentFile != null}">
-        <h3 th:text="${currentFile.name}"></h3>
+    <form id="edit-form" th:if="${currentFile != null}">
         <textarea id="text-editor" placeholder="Edit your content here" th:text="${currentFile.content}"></textarea>
-        <img th:src="@{/gifs/doge.gif}" id="status-icon" alt="Sync status Image">
+        <th:block th:if="${currentDockerProject != null}">
+            <textarea id="container-logs" placeholder="No logs" readonly
+                      th:text="${currentDockerProjectLogs}"></textarea>
+            <label for="input-service-link">
+                URL for service:
+                <input type="text"
+                       name="link"
+                       id="input-service-link"
+                       placeholder="URL to service"
+                       th:value="${currentDockerProject.link}">
+            </label>
+            <h3>Tags</h3>
+            <ul id="list-tags">
+                <li th:each="tag: ${currentDockerProject.tags}">
+                    <th:block th:text="${tag.name}"/>
+                    <img th:src="@{/gifs/trash.gif}"
+                         alt="Trash Image"
+                         th:data-tag-id="${tag.name}"
+                         data-action="delete">
+                </li>
+                <li>
+                    <input type="text"
+                           name="link"
+                           id="input-new-tag"
+                           placeholder="New Tag">
+                    <button id="button-add-tag">Add Tag!</button>
+                </li>
+            </ul>
+            <h4>Suggested Tags</h4>
+
+            <ul id="list-suggested-tags" th:if="${tags != null}">
+                <li th:each="tag: ${tags}" th:data-tag-id="${tag.name}" data-action="add">
+                    <th:block th:text="${tag.name}"/>
+                    <img th:src="@{/gifs/trash.gif}"
+                         alt="Trash Image"
+                         th:data-tag-id="${tag.name}"
+                         data-action="delete-permanently">
+                </li>
+            </ul>
+        </th:block>
     </form>
 </main>
 <footer th:replace="~{fragments :: footer}"></footer>

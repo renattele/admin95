@@ -21,7 +21,7 @@ public class OkHttpConfig {
 
     @Bean
     @OkHttpDockerClient
-    public OkHttpClient dockerOkHttpClient(@Value("${DOCKER_SOCKET_PATH}") String dockerPath) {
+    public OkHttpClient dockerOkHttpClient(@Value("${docker.unix-path}") String dockerPath) {
         var dockerSockFile = new File(dockerPath);
         if (!dockerSockFile.exists()) {
             throw new IllegalArgumentException("Docker path not found, provided: " + dockerPath);

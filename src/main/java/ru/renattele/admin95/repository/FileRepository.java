@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface FileRepository {
     List<FileEntity> getFiles();
+    FileEntity getFile(String id);
     boolean saveFile(FileEntity file);
     boolean deleteFile(String id);
 }

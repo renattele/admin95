@@ -7,16 +7,18 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.renattele.admin95.dto.DockerProjectDto;
 import ru.renattele.admin95.dto.TagDto;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
-import ru.renattele.admin95.mapper.DockerProjectDetailsMapper;
 import ru.renattele.admin95.mapper.DockerProjectMapper;
 import ru.renattele.admin95.mapper.TagMapper;
 import ru.renattele.admin95.model.TagEntity;
+import ru.renattele.admin95.model.docker.DockerProjectEntity;
 import ru.renattele.admin95.repository.TagRepository;
 import ru.renattele.admin95.service.TagsService;
 import ru.renattele.admin95.service.docker.DockerProjectManagementService;
 import ru.renattele.admin95.service.docker.DockerProjectQueryService;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,11 +35,9 @@ public class TagsServiceImpl implements TagsService {
 
     @Override
     public TagDto getTagByName(String name) {
-        var entity = tagRepository.findTagEntityByName(name);
-        if (entity == null) {
-            return null;
-        }
-        return tagMapper.toDto(entity);
+        return findTagEntityByName(name)
+                .map(tagMapper::toDto)
+                .orElse(null);
     }
 
     @Override
@@ -56,11 +56,10 @@ public class TagsServiceImpl implements TagsService {
 
     @Override
     public void deleteTag(TagDto tag) {
-        var entity = tagMapper.toEntity(tag);
-        if (entity == null || entity.getId() == null) {
+        if (tag == null || tag.getId() == null) {
             throw new ResourceNotFoundException("Tag not found");
         }
-        tagRepository.deleteTagById(entity.getId());
+        tagRepository.deleteTagById(tag.getId());
     }
 
     @Override
@@ -72,23 +71,15 @@ public class TagsServiceImpl implements TagsService {
 
     @Override
     public Set<DockerProjectDto> projectsFor(TagDto tag) {
-        var entity = tagMapper.toEntity(tag);
-        if (entity == null) {
-            throw new ResourceNotFoundException("Tag not found");
-        }
-        return entity.getDockerProjects().stream()
-                .map(dockerProjectMapper::toDto)
-                .collect(Collectors.toSet());
+        return findTagEntityByName(tag.getName())
+                .map(entity -> mapProjectsToDto(entity.getDockerProjects()))
+                .orElseThrow(() -> new ResourceNotFoundException("Tag not found"));
     }
 
     @Override
     public Set<TagDto> tagsFor(DockerProjectDto project) {
-        var details = dockerProjectQueryService.getProjectDetails(project);
-        var entity = dockerProjectMapper.toEntity(project, details);
-        if (entity == null) {
-            throw new ResourceNotFoundException("Project not found");
-        }
-        return entity.getTags().stream()
+        var projectEntity = getProjectEntity(project);
+        return projectEntity.getTags().stream()
                 .map(tagMapper::toDto)
                 .collect(Collectors.toSet());
     }
@@ -102,34 +93,78 @@ public class TagsServiceImpl implements TagsService {
 
     @Override
     public void addTagToProject(TagDto tag, DockerProjectDto project) {
-        var details = dockerProjectQueryService.getProjectDetails(project);
-        var tagEntity = tagMapper.toEntity(tag);
-        var projectEntity = dockerProjectMapper.toEntity(project, details);
-        if (tagEntity == null || projectEntity == null) {
-            throw new ResourceNotFoundException("Tag or project not found");
-        }
-        var tagEntityFromDb = tagRepository.findTagEntityByName(tag.getName());
-        tagEntity.setDockerProjects(tagEntityFromDb.getDockerProjects());
+        var tagEntity = getExistingTagEntity(tag);
+        var projectEntity = getProjectEntity(project);
+        
+        // Update the project
         project.getTags().add(tag);
-        tagEntity.getDockerProjects().add(projectEntity);
         dockerProjectManagementService.updateProject(project);
+        
+        // Update the tag
+        tagEntity.getDockerProjects().add(projectEntity);
         tagRepository.save(tagEntity);
     }
 
     @Override
     public void removeTagFromProject(TagDto tag, DockerProjectDto project) {
-        var details = dockerProjectQueryService.getProjectDetails(project);
-        var tagEntity = tagMapper.toEntity(tag);
-        var projectEntity = dockerProjectMapper.toEntity(project, details);
-        if (tagEntity == null || projectEntity == null) {
-            throw new ResourceNotFoundException("Tag or project not found");
-        }
-        var tagEntityFromDb = tagRepository.findTagEntityByName(tag.getName());
-        tagEntity.setDockerProjects(tagEntityFromDb.getDockerProjects());
-
+        var tagEntity = getExistingTagEntity(tag);
+        var projectEntity = getProjectEntity(project);
+        
+        // Update the project
         project.getTags().remove(tag);
         dockerProjectManagementService.updateProject(project);
+        
+        // Update the tag
         tagEntity.getDockerProjects().remove(projectEntity);
         tagRepository.save(tagEntity);
+    }
+    
+    // Helper methods
+    
+    /**
+     * Finds a tag entity by name and returns it wrapped in an Optional
+     */
+    private Optional<TagEntity> findTagEntityByName(String name) {
+        return Optional.ofNullable(tagRepository.findTagEntityByName(name));
+    }
+    
+    /**
+     * Gets an existing tag entity or throws an exception if not found
+     */
+    private TagEntity getExistingTagEntity(TagDto tag) {
+        var tagEntity = tagMapper.toEntity(tag);
+        if (tagEntity == null) {
+            throw new ResourceNotFoundException("Tag not found");
+        }
+        
+        var tagEntityFromDb = findTagEntityByName(tag.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Tag not found"));
+                
+        tagEntity.setDockerProjects(tagEntityFromDb.getDockerProjects());
+        return tagEntity;
+    }
+    
+    /**
+     * Gets a project entity from a project DTO
+     */
+    private DockerProjectEntity getProjectEntity(DockerProjectDto project) {
+        var details = dockerProjectQueryService.getProjectDetails(project);
+        var projectEntity = dockerProjectMapper.toEntity(project, details);
+        if (projectEntity == null) {
+            throw new ResourceNotFoundException("Project not found");
+        }
+        return projectEntity;
+    }
+    
+    /**
+     * Maps a set of project entities to DTOs
+     */
+    private Set<DockerProjectDto> mapProjectsToDto(Set<DockerProjectEntity> projects) {
+        if (projects == null) {
+            return Collections.emptySet();
+        }
+        return projects.stream()
+                .map(dockerProjectMapper::toDto)
+                .collect(Collectors.toSet());
     }
 }

@@ -11,13 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.web.bind.annotation.*;
 import ru.renattele.admin95.dto.DockerProjectDto;
 import ru.renattele.admin95.dto.TagDto;
-import ru.renattele.admin95.model.TagEntity;
-import ru.renattele.admin95.model.docker.DockerProjectEntity;
-import ru.renattele.admin95.util.RegexConstants;
 import ru.renattele.admin95.validation.NameRegexPattern;
 
 import java.lang.annotation.*;
@@ -55,7 +51,7 @@ public interface TagsApi {
         @ApiResponse(responseCode = "400", description = "Invalid project name format"),
         @ApiResponse(responseCode = "404", description = "Project not found")
     })
-    @GetMapping("/projects-by-tag/{name}")
+    @GetMapping("/tags-by-project/{name}")
     Set<TagDto> tagsForProject(
             @Parameter(description = "Name of the project", required = true)
             @PathVariable("name") @NameRegexPattern String projectName);
@@ -72,7 +68,7 @@ public interface TagsApi {
         @ApiResponse(responseCode = "400", description = "Invalid tag name format"),
         @ApiResponse(responseCode = "404", description = "Tag not found")
     })
-    @GetMapping("/tags-by-project/{name}")
+    @GetMapping("/projects-by-tag/{name}")
     Set<DockerProjectDto> projectsForTag(
             @Parameter(description = "Name of the tag", required = true)
             @PathVariable("name") @TagPattern String tagName);

@@ -1,11 +1,9 @@
 package ru.renattele.admin95.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 import ru.renattele.admin95.api.ContainersApi;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
 import ru.renattele.admin95.model.FileEntity;
@@ -46,9 +44,12 @@ public class ContainersController implements ContainersApi {
                 });
         var dockerProjects = dockerProjectQueryService.getProjects();
         var currentDockerProject = dockerProjectQueryService.getProjectByName(name);
-        var projectLogs = currentDockerProject != null ? dockerProjectQueryService.logsForProject(currentDockerProject)
-                : null;
-        var tags = currentDockerProject != null ? tagsService.suggestedTagsFor(currentDockerProject) : null;
+        var projectLogs = currentDockerProject != null ?
+                dockerProjectQueryService.logsForProject(currentDockerProject) :
+                null;
+        var tags = currentDockerProject != null ?
+                tagsService.suggestedTagsFor(currentDockerProject) :
+                null;
         model.addAttribute("files", allFiles);
         model.addAttribute("dockerProjects", dockerProjects);
         model.addAttribute("currentFile", currentFile);

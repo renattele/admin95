@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments :: head(~{::title}, @{/terminal.css})}">
-<title>Terminal</title>
+    <title>Terminal</title>
 </head>
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main>
+    <h1>
+        <th:block th:replace="~{fragments :: header_title('Dashboard')}"></th:block>
+    </h1>
     <iframe th:src="${terminalUrl}"></iframe>
 </main>
 <footer th:replace="~{fragments :: footer}"></footer>

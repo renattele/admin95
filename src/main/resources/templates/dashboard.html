@@ -6,7 +6,9 @@
 <body>
 <header th:replace="~{fragments :: header}"></header>
 <main>
-    <h1>Dashboard</h1>
+    <h1>
+        <th:block th:replace="~{fragments :: header_title('Dashboard')}"></th:block>
+    </h1>
     <figure>
         <img th:src="*{CPU_TEMPERATURE_URL}" alt="CPU Temperature Image">
         <figcaption>CPU Temperature</figcaption>

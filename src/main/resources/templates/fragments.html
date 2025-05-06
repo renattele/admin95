@@ -37,6 +37,10 @@
         </a>
     </nav>
 </header>
+<th:block th:fragment="header_title(title)">
+    <label th:text="${title}">
+    </label>
+</th:block>
 <footer th:fragment="footer">
     <img th:src="@{/gifs/divider.gif}" alt="Divider Image" style="width: 100%">
     <p>

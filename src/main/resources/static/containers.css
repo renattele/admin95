@@ -37,25 +37,6 @@ main form textarea {
     padding: 8px;
 }
 
-h1 {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-h1 label {
-    width: 300px;
-    padding: 20px 0;
-    text-align: center;
-    color: #000;
-    background-image: url("/gifs/goldenframe.gif");
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-}
-
 
 main form [for="input-service-link"] {
     width: auto;
@@ -189,10 +170,6 @@ main aside li[aria-selected=true] {
     font-weight: bold;
 }
 
-h1 {
-    text-align: center;
-}
-
 main aside form {
     display: flex;
     flex-direction: column;
@@ -205,20 +182,4 @@ label {
 input {
     background-color: transparent;
     border: 4px ridge white;
-}
-
-button {
-    background-color: transparent;
-    border: 4px ridge white;
-    animation: rotateHorizontal 2s linear infinite;
-    cursor: pointer;
-}
-
-@keyframes rotateHorizontal {
-    0% {
-        transform: rotateY(0deg);
-    }
-    100% {
-        transform: rotateY(360deg);
-    }
 }

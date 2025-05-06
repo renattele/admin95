@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments :: head(~{::title}, @{/backups.css})}">
+    <title>Backups</title>
+</head>
+<body>
+<script defer th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttonCreateBackup = document.getElementById('button-create-backup');
+        buttonCreateBackup.addEventListener('click', () => {
+            const endpoint = '[(@{/admin/backups})]';
+            fetch(endpoint, {
+                method: 'POST'
+            }).then(reload);
+        });
+
+        const deleteButtons = document.querySelectorAll('img[data-action="delete"][data-backup-id]');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                const backupId = button.getAttribute('data-backup-id');
+                console.log(backupId);
+                const endpoint = '[(@{/admin/backups/})]' + backupId;
+                fetch(endpoint, {
+                    method: 'DELETE'
+                }).then(reload);
+            });
+        });
+
+        const deleteBackupForm = document.getElementById('form-delete-backups');
+        deleteBackupForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(deleteBackupForm);
+            const body = JSON.stringify(formDataToJson(formData));
+            console.log(body);
+            const endpoint = '[(@{/admin/backups/delete-count-query})]';
+            fetch(endpoint, {
+                method: 'POST',
+                body: body,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.text()).then(text => {
+                if (text === '0') {
+                    alert('No backups found for the specified criteria.');
+                    return
+                }
+                if (confirm("Are you sure you want to delete " + text + " backups? This action cannot be undone!")) {
+                    const deleteEndpoint = '[(@{/admin/backups/query})]';
+                    fetch(deleteEndpoint, {
+                        method: 'DELETE',
+                        body: body,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            reload();
+                        } else {
+                            alert("Failed to delete backups.");
+                        }
+                    })
+                }
+            });
+        });
+    });
+</script>
+<header th:replace="~{fragments :: header}"></header>
+<main>
+    <h1>
+        <th:block th:include="~{fragments :: header_title('Backups')}"/>
+        <a href="#">
+            <img alt="Create Backup" id="button-create-backup" role="button" th:src="@{/gifs/file.gif}">
+        </a>
+    </h1>
+    <h2>Delete Backups:</h2>
+    <form id="form-delete-backups" method="post" th:action="@{/admin/backups/delete}">
+        <label for="select-delete-backups-older-than">
+            Delete backups older than
+            <select id="select-delete-backups-older-than" name="age">
+                <option th:each="period: ${T(ru.renattele.admin95.model.BackupRetentionPeriod).values()}"
+                        th:text="#{${period.messageKey}}"
+                        th:value="${period.name()}"></option>
+            </select>
+            AND
+        </label>
+        <label for="select-delete-backups-min-size">
+            with size greater than
+            <input id="select-delete-backups-min-size" name="minSize" placeholder="Any size" type="number">
+            <select id="select-delete-backups-min-size-unit" name="minSizeUnit">
+                <option th:each="unit: ${T(ru.renattele.admin95.model.FileSizeUnit).values()}"
+                        th:selected="${unit == T(ru.renattele.admin95.model.FileSizeUnit).GIGABYTE}"
+                        th:text="#{${unit.messageKey}}"
+                        th:value="${unit.name}"
+                ></option>
+            </select>
+        </label>
+        <label for="select-delete-backups-max-size">
+            & less than
+            <input id="select-delete-backups-max-size" name="maxSize" placeholder="Any size" type="number">)
+            <select id="select-delete-backups-max-size-unit" name="maxSizeUnit">
+                <option th:each="unit: ${T(ru.renattele.admin95.model.FileSizeUnit).values()}"
+                        th:selected="${unit == T(ru.renattele.admin95.model.FileSizeUnit).GIGABYTE}"
+                        th:text="#{${unit.messageKey}}"
+                        th:value="${unit.name}"
+                ></option>
+            </select>
+        </label>
+        <button type="submit">
+            Delete!
+            <img alt="Delete Backups"
+                 th:src="@{/gifs/Nuke.gif}">
+        </button>
+    </form>
+    <ul id="backups-list">
+        <li th:each="backup: ${backups}">
+            <span>
+                <h3 th:text="${backup.name}"></h3>
+                <span>&#8226;</span>
+                <th:block th:text="${backup.sizeFormatted()}"/>
+            </span>
+            <span th:if="${!backup.message.isEmpty()}">
+                <br>
+                <br>
+                Message: <th:block th:text="${backup.message}"/>
+            </span>
+            <br>
+            <img alt="Delete Backup"
+                 data-action="delete"
+                 role="button"
+                 th:data-backup-id="${backup.id}"
+                 th:src="@{/gifs/trash.gif}">
+            <a data-action="download"
+               th:data-backup-id="${backup.id}"
+               th:href="|@{/admin/backups/}${backup.id}/${backup.name}|">
+                <img alt="Download Backup" th:src="@{/gifs/download.gif}">
+            </a>
+        </li>
+    </ul>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

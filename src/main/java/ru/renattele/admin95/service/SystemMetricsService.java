@@ -15,4 +15,6 @@ public interface SystemMetricsService {
             LocalDateTime startTime,
             LocalDateTime endTime
     );
+
+    void collectMetrics();
 }

@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +46,8 @@ public class SystemMetricsServiceImpl implements SystemMetricsService {
     }
 
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRateString = "${dashboard.collect-millis}")
+    @Override
     public void collectMetrics() {
         try {
             SystemMetricsEntity metrics = new SystemMetricsEntity();

@@ -1,0 +1,69 @@
+#backups-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0;
+    margin-top: 40px;
+}
+
+#backups-list li img {
+    cursor: pointer;
+}
+
+#backups-list li h3 {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+#backups-list li {
+    list-style-type: none;
+    background-image: url("/gifs/colorful-border.gif");
+    background-size: 100% 100%;
+    padding: 20px 40px;
+}
+
+select {
+    background-image: url("/gifs/a_frame_shinegreen.gif");
+    background-size: 100% 100%;
+    padding: 20px 40px;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    appearance: none;
+}
+
+#form-delete-backups {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+select :focus {
+    outline: none;
+}
+
+select option {
+    background-color: black;
+}
+
+input {
+    background-image: url("/gifs/a_frame_shinegreen.gif");
+    background-size: 100% 100%;
+    padding: 20px 40px;
+    background-color: transparent;
+    outline: none;
+    border: none;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: none;
+}
+
+button img {
+    width: 48px;
+    height: 48px;
+}

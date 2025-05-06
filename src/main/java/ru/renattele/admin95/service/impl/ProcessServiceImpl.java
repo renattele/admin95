@@ -9,7 +9,6 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -23,6 +22,12 @@ public class ProcessServiceImpl implements ProcessService {
         return new ProcessBuilder()
                 .command(processArgs)
                 .start();
+    }
+
+    @Override
+    public Process runShell(String command) throws IOException {
+        log.info("Running shell command: {}", command);
+        return runOnce("sh", "-c", command);
     }
 
     private final Map<Integer, Thread> processes = new HashMap<>();

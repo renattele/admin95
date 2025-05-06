@@ -25,6 +25,6 @@ public interface TerminalApi {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Terminal dashboard successfully retrieved")
     })
-    @GetMapping("/terminal")
+    @GetMapping
     String dashboard(Model model);
 }

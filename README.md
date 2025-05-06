@@ -2,6 +2,8 @@
 
 ## Todo
 ### Other
+
+- [ ] CriteriaBuilder
 - [ ] Redirecting when request is not valid
 - [ ] User authentication
 - [ ] Docker

@@ -17,3 +17,9 @@ function reload() {
 const confirmDeletion = (object) => {
     return window.confirm(`Are you sure you want to delete ${object}?`);
 }
+
+const formDataToJson = (form) => {
+    const object = {};
+    form.forEach((value, key) => object[key] = value);
+    return object;
+};

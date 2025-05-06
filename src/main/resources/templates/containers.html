@@ -169,12 +169,9 @@
     });
 </script>
 <header th:replace="~{fragments :: header}"></header>
-<h1 th:if="${currentFile == null}">Containers</h1>
-<h1 th:if="${currentFile != null}">
-    <label>
-        <th:block th:text="${currentFile.name}"/>
-    </label>
-    <img th:src="@{/gifs/doge.gif}" id="status-icon" alt="Sync status Image">
+<h1>
+    <th:block th:include="~{fragments :: header_title(${currentFile != null ? currentFile.name : 'Containers'})}"/>
+    <img alt="Sync status Image" id="status-icon" th:if="${currentFile != null}" th:src="@{/gifs/doge.gif}">
 </h1>
 <main>
     <aside>

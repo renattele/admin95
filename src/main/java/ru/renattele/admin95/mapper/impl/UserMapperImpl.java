@@ -15,6 +15,8 @@ public class UserMapperImpl implements UserMapper {
                 .password(dto.getPassword())
                 .roles(dto.getRoles().stream().map(this::toEntityRole).toList())
                 .state(toEntityState(dto.getState()))
+                .createdAt(dto.getCreatedAt())
+                .lastAccessedAt(dto.getLastAccessedAt())
                 .build();
     }
 
@@ -26,14 +28,13 @@ public class UserMapperImpl implements UserMapper {
                 .password(entity.getPassword())
                 .roles(entity.getRoles().stream().map(this::toDtoRole).toList())
                 .state(toDtoState(entity.getState()))
+                .createdAt(entity.getCreatedAt())
+                .lastAccessedAt(entity.getLastAccessedAt())
                 .build();
     }
 
     private UserDto.Role toDtoRole(UserEntity.Role role) {
         switch (role) {
-            case UserEntity.Role.ACCESS_USERS -> {
-                return UserDto.Role.ACCESS_USERS;
-            }
             case ACCESS_DASHBOARD -> {
                 return UserDto.Role.ACCESS_DASHBOARD;
             }
@@ -43,8 +44,11 @@ public class UserMapperImpl implements UserMapper {
             case ACCESS_TERMINAL -> {
                 return UserDto.Role.ACCESS_TERMINAL;
             }
-            case UserEntity.Role.ACCESS_BACKUPS -> {
+            case ACCESS_BACKUPS -> {
                 return UserDto.Role.ACCESS_BACKUPS;
+            }
+            case ACCESS_USERS -> {
+                return UserDto.Role.ACCESS_USERS;
             }
             default -> throw new IllegalStateException("Unexpected value: " + role);
         }
@@ -52,9 +56,6 @@ public class UserMapperImpl implements UserMapper {
 
     private UserEntity.Role toEntityRole(UserDto.Role role) {
         switch (role) {
-            case ACCESS_USERS -> {
-                return UserEntity.Role.ACCESS_USERS;
-            }
             case ACCESS_DASHBOARD -> {
                 return UserEntity.Role.ACCESS_DASHBOARD;
             }
@@ -66,6 +67,9 @@ public class UserMapperImpl implements UserMapper {
             }
             case ACCESS_BACKUPS -> {
                 return UserEntity.Role.ACCESS_BACKUPS;
+            }
+            case ACCESS_USERS -> {
+                return UserEntity.Role.ACCESS_USERS;
             }
             default -> throw new IllegalStateException("Unexpected value: " + role);
         }

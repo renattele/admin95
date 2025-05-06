@@ -1,4 +1,4 @@
-package ru.renattele.admin95.forms;
+package ru.renattele.admin95.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

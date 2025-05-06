@@ -153,3 +153,12 @@ button {
         transform: rotateY(360deg);
     }
 }
+
+input {
+    background-image: url("/gifs/a_frame_shinegreen.gif");
+    background-size: 100% 100%;
+    padding: 20px 40px;
+    background-color: transparent;
+    outline: none;
+    border: none;
+}

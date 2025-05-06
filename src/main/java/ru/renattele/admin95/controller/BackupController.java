@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import ru.renattele.admin95.api.BackupApi;
 import ru.renattele.admin95.dto.BackupDto;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
-import ru.renattele.admin95.forms.BackupDeleteQueryForm;
+import ru.renattele.admin95.form.BackupDeleteQueryForm;
 import ru.renattele.admin95.mapper.BackupDeleteQueryMapper;
 import ru.renattele.admin95.service.BackupService;
 

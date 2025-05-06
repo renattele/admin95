@@ -183,3 +183,8 @@ input {
     background-color: transparent;
     border: 4px ridge white;
 }
+
+input {
+    background: none;
+    padding: 10px;
+}

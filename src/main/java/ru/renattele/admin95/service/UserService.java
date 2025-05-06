@@ -1,20 +1,36 @@
 package ru.renattele.admin95.service;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
-import ru.renattele.admin95.dto.login.LoginRequest;
-import ru.renattele.admin95.dto.login.LoginResponse;
-import ru.renattele.admin95.dto.signup.SignupRequest;
-import ru.renattele.admin95.dto.signup.SignupResponse;
-import ru.renattele.admin95.model.UserEntity;
+import org.jetbrains.annotations.Nullable;
+import ru.renattele.admin95.dto.UserDto;
 
 import java.util.List;
 
-public interface UserService extends UserDetailsService {
-    List<UserEntity> getAllUsers();
+public interface UserService {
+    List<UserDto> getUsers();
 
-    void saveUser(UserEntity user);
+    long countUsers();
 
-    SignupResponse register(SignupRequest request);
+    @Nullable UserDto getUserByName(String name);
 
-    LoginResponse authenticate(LoginRequest request);
+    UserDto createUser(
+            String name,
+            String password,
+            List<UserDto.Role> roles
+    );
+
+    boolean updatePassword(
+            String name,
+            String oldPassword,
+            String newPassword
+    );
+
+    boolean updateRoles(
+            String name,
+            List<UserDto.Role> roles
+    );
+
+    boolean updateState(
+            String name,
+            UserDto.State state
+    );
 }

@@ -1,10 +1,8 @@
 package ru.renattele.admin95.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -12,13 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    public enum Role {
-        ACCESS_DASHBOARD,
-        ACCESS_CONTAINERS,
-        ACCESS_TERMINAL,
-        ACCESS_BACKUPS,
-        ACCESS_USERS
-    }
+    private LocalDateTime createdAt;
     public enum State {
         OK, DISABLED
     }
@@ -27,4 +19,16 @@ public class UserDto {
     private String password;
     private List<Role> roles;
     private State state;
+    private LocalDateTime lastAccessedAt;
+    @RequiredArgsConstructor
+    @Getter
+    public enum Role {
+        ACCESS_DASHBOARD("access.dashboard"),
+        ACCESS_CONTAINERS("access.containers"),
+        ACCESS_TERMINAL("access.terminal"),
+        ACCESS_BACKUPS("access.backups"),
+        ACCESS_USERS("access.users");
+
+        private final String messageKey;
+    }
 }

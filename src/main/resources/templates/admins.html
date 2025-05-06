@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments :: head(~{::title}, @{/admins.css})}">
+    <title>Admins</title>
+</head>
+<body>
+<script defer th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttonCreateBackup = document.getElementById('button-create-backup');
+        buttonCreateBackup.addEventListener('click', () => {
+            const endpoint = '[(@{/admin/backups})]';
+            fetch(endpoint, {
+                method: 'POST'
+            }).then(reload);
+        });
+
+        const deleteButtons = document.querySelectorAll('img[data-action="delete"][data-backup-id]');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                const backupId = button.getAttribute('data-backup-id');
+                console.log(backupId);
+                const endpoint = '[(@{/admin/backups/})]' + backupId;
+                fetch(endpoint, {
+                    method: 'DELETE'
+                }).then(reload);
+            });
+        });
+
+        const deleteBackupForm = document.getElementById('form-delete-backups');
+        deleteBackupForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(deleteBackupForm);
+            const body = JSON.stringify(formDataToJson(formData));
+            console.log(body);
+            const endpoint = '[(@{/admin/backups/delete-count-query})]';
+            fetch(endpoint, {
+                method: 'POST',
+                body: body,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.text()).then(text => {
+                if (text === '0') {
+                    alert('No backups found for the specified criteria.');
+                    return
+                }
+                if (confirm("Are you sure you want to delete " + text + " backups? This action cannot be undone!")) {
+                    const deleteEndpoint = '[(@{/admin/backups/query})]';
+                    fetch(deleteEndpoint, {
+                        method: 'DELETE',
+                        body: body,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            reload();
+                        } else {
+                            alert("Failed to delete backups.");
+                        }
+                    })
+                }
+            });
+        });
+    });
+</script>
+<header th:replace="~{fragments :: header}"></header>
+<!-- Modified fragment definition to properly handle null admin -->
+<th:block th:remove="body">
+    <form th:data-user-id="${id}"
+          th:fragment="admin_form(id, username, admin_roles, state, button_message)">
+        <label>
+            Name:
+            <br>
+            <input name="name" placeholder="Name" th:value="${username}" type="text">
+        </label>
+        <br>
+        <br>
+        <label>
+            Password:
+            <br>
+            <input name="password" placeholder="New Password" type="password">
+        </label>
+        <br>
+        Access:
+        <br>
+        <label th:each="role: ${roles}">
+            <input th:checked="${admin_roles != null && #lists.contains(admin_roles, role)}" th:name="${role.name()}"
+                   type="checkbox">
+            <th:block th:text="#{${role.messageKey}}"/>
+            <br>
+        </label>
+        <br>
+        <label>
+            <input th:checked="${state == 'OK'}" th:name="enabled"
+                   type="checkbox">
+            Enabled
+            <br>
+        </label>
+        <button th:text="${button_message}" type="submit">Update!</button>
+    </form>
+</th:block>
+<main>
+    <h1>
+        <th:block th:include="~{fragments :: header_title('Admins')}"/>
+    </h1>
+    <ul id="admins-list">
+        New User:
+        <li>
+            <form th:replace="~{admins :: admin_form('new', '', ${{}}, 'OK', 'Create!')}"></form>
+        </li>
+        <li th:each="admin: ${admins}">
+            <form th:replace="~{admins :: admin_form(admin.id, admin.name, admin.roles, admin.state.name, 'Update!')}"></form>
+        </li>
+    </ul>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

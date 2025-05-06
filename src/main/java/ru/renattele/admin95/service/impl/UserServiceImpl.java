@@ -1,75 +1,89 @@
 package ru.renattele.admin95.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.renattele.admin95.dto.login.LoginRequest;
-import ru.renattele.admin95.dto.login.LoginResponse;
-import ru.renattele.admin95.dto.signup.SignupRequest;
-import ru.renattele.admin95.dto.signup.SignupResponse;
-import ru.renattele.admin95.model.UserEntity;
+import ru.renattele.admin95.dto.UserDto;
+import ru.renattele.admin95.mapper.UserMapper;
 import ru.renattele.admin95.repository.UserRepository;
 import ru.renattele.admin95.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
     @Override
-    public void saveUser(UserEntity user) {
-        userRepository.save(user);
+    public long countUsers() {
+        return userRepository.count();
+    }
+
+    @Nullable
+    @Override
+    public UserDto getUserByName(String name) {
+        return userRepository.findByNameEquals(name)
+                .map(userMapper::toDto)
+                .orElse(null);
     }
 
     @Override
-    public SignupResponse register(SignupRequest request) {
-        var user = userRepository.findByNameEquals(request.getName());
-        if (user.isPresent()) return new SignupResponse.UserAlreadyExists();
-        var encodedPassword = passwordEncoder.encode(request.getPassword());
-        var newUser = UserEntity.builder()
-                .name(request.getName())
-                .password(encodedPassword)
+    public UserDto createUser(String name, String password, List<UserDto.Role> roles) {
+        var dto = UserDto.builder()
+                .name(name)
+                .password(passwordEncoder.encode(password))
+                .roles(roles)
+                .state(UserDto.State.OK)
+                .createdAt(LocalDateTime.now())
                 .build();
-        userRepository.save(newUser);
-        return new SignupResponse.Success();
+        var entity = userMapper.toEntity(dto);
+        var savedEntity = userRepository.save(entity);
+        return userMapper.toDto(savedEntity);
     }
 
     @Override
-    public LoginResponse authenticate(LoginRequest request) {
-        var user = userRepository.findByNameEquals(request.getName());
-        if (user.isEmpty()) return new LoginResponse.WrongCredentials();
-        var passwordMatches = passwordEncoder.matches(
-                request.getPassword(),
-                user.get().getPassword());
-
-        if (passwordMatches) {
-            return new LoginResponse.Success();
-        } else {
-            return new LoginResponse.WrongCredentials();
-        }
+    public boolean updatePassword(String name, String oldPassword, String newPassword) {
+        var entity = userRepository.findByNameEquals(name);
+        if (entity.isEmpty()) return false;
+        if (passwordEncoder.matches(oldPassword, entity.get().getPassword())) return false;
+        entity.get().setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(entity.get());
+        return true;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findByNameEquals(username);
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return User.builder()
-                .username(user.get().getName())
-                .passwordEncoder(passwordEncoder::encode)
-                .password(user.get().getPassword())
-                .roles("USER")
-                .build();
+    public boolean updateRoles(String name, List<UserDto.Role> roles) {
+        var entity = userRepository.findByNameEquals(name);
+        if (entity.isEmpty()) return false;
+        var dto = userMapper.toDto(entity.get());
+        dto.setRoles(roles);
+
+        var newEntity = userMapper.toEntity(dto);
+        userRepository.save(newEntity);
+        return true;
+    }
+
+    @Override
+    public boolean updateState(String name, UserDto.State state) {
+        var entity = userRepository.findByNameEquals(name);
+        if (entity.isEmpty()) return false;
+        var dto = userMapper.toDto(entity.get());
+        dto.setState(state);
+
+        var newEntity = userMapper.toEntity(dto);
+        userRepository.save(newEntity);
+        return true;
     }
 }

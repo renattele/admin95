@@ -1,8 +1,12 @@
 package ru.renattele.admin95.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,6 +35,12 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false)
     private State state;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "last_accessed_at")
+    private LocalDateTime lastAccessedAt;
 
     public enum Role {
         ACCESS_DASHBOARD,

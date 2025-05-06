@@ -2,7 +2,7 @@ package ru.renattele.admin95.mapper.impl;
 
 import org.springframework.stereotype.Component;
 import ru.renattele.admin95.dto.BackupDeleteQueryDto;
-import ru.renattele.admin95.forms.BackupDeleteQueryForm;
+import ru.renattele.admin95.form.BackupDeleteQueryForm;
 import ru.renattele.admin95.mapper.BackupDeleteQueryMapper;
 import ru.renattele.admin95.model.BackupDeleteQuery;
 import ru.renattele.admin95.model.BackupRetentionPeriod;

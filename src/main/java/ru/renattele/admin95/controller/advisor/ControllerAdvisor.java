@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.renattele.admin95.exception.ConflictException;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
 
 @Slf4j
@@ -16,5 +17,11 @@ public class ControllerAdvisor {
     public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
         log.info(ex.getMessage(), ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<String> handleConflictException(ConflictException ex) {
+        log.info(ex.getMessage(), ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 }

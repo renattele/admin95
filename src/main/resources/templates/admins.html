@@ -22,13 +22,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(response => {
-                    if (response.ok) {
-                        reload();
-                    } else {
-                        alert("Failed to update admin.");
-                    }
-                });
+                }).then(fetchHandler(`Failed to update admin`));
             });
         });
 
@@ -42,13 +36,7 @@
                     const endpoint = '[(@{/admin/admins/})]' + userId;
                     fetch(endpoint, {
                         method: 'DELETE',
-                    }).then(response => {
-                        if (response.ok) {
-                            reload();
-                        } else {
-                            alert("Failed to delete admin.");
-                        }
-                    });
+                    }).then(fetchHandler(`Failed to delete tag`));
                 }
             });
         });

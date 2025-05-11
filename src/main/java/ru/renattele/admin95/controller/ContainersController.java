@@ -1,10 +1,12 @@
 package ru.renattele.admin95.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import ru.renattele.admin95.api.ContainersApi;
+import ru.renattele.admin95.exception.ConflictException;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
 import ru.renattele.admin95.model.FileEntity;
 import ru.renattele.admin95.repository.FileRepository;
@@ -13,6 +15,7 @@ import ru.renattele.admin95.service.docker.DockerLifecycleService;
 import ru.renattele.admin95.service.docker.DockerProjectManagementService;
 import ru.renattele.admin95.service.docker.DockerProjectQueryService;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ContainersController implements ContainersApi {
@@ -66,7 +69,10 @@ public class ContainersController implements ContainersApi {
 
     @Override
     public void createFile(String name) {
-        fileRepository.saveFile(FileEntity.builder().name(name).build());
+        var dockerProject = dockerProjectQueryService.getProjectByName(name);
+        if (dockerProject == null) {
+            fileRepository.saveFile(FileEntity.builder().name(name).build());
+        } else throw new ConflictException();
     }
 
     @Override

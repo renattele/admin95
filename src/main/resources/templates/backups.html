@@ -11,7 +11,7 @@
             const endpoint = '[(@{/admin/backups})]';
             fetch(endpoint, {
                 method: 'POST'
-            }).then(reload);
+            }).then(fetchHandler(`Failed to create backup`));
         });
 
         const deleteButtons = document.querySelectorAll('img[data-action="delete"][data-backup-id]');
@@ -23,7 +23,7 @@
                 const endpoint = '[(@{/admin/backups/})]' + backupId;
                 fetch(endpoint, {
                     method: 'DELETE'
-                }).then(reload);
+                }).then(fetchHandler(`Failed to delete backup`));
             });
         });
 
@@ -53,13 +53,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         }
-                    }).then(response => {
-                        if (response.ok) {
-                            reload();
-                        } else {
-                            alert("Failed to delete backups.");
-                        }
-                    })
+                    }).then(fetchHandler(`Failed to delete specified backups`))
                 }
             });
         });

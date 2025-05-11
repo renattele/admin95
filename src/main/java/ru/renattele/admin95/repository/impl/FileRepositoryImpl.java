@@ -65,7 +65,7 @@ public class FileRepositoryImpl implements FileRepository {
         }
 
         try (var writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(fileEntity.getContent());
+            writer.write(fileEntity.getContent() != null ? fileEntity.getContent() : "");
             return true;
         } catch (IOException e) {
             log.error("Cannot write to file {}", file, e);

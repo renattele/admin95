@@ -14,7 +14,6 @@ import ru.renattele.admin95.dto.DockerProjectDto;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
 import ru.renattele.admin95.mapper.DockerProjectDetailsMapper;
 import ru.renattele.admin95.mapper.DockerProjectMapper;
-import ru.renattele.admin95.model.docker.DockerProjectDetailsEntity;
 import ru.renattele.admin95.repository.docker.DockerProjectRepository;
 import ru.renattele.admin95.service.docker.DockerComposeExecutorService;
 import ru.renattele.admin95.service.docker.DockerProjectManagementService;
@@ -44,6 +43,8 @@ public class DockerProjectManagementServiceImpl implements DockerProjectManageme
 
     @Override
     public DockerProjectDto createProject(String name) {
+        var existingProject = dockerProjectRepository.findDockerProjectEntityByNameEquals(name);
+        if (existingProject.isPresent()) return null;
         var projectDto = DockerProjectDto.builder()
                 .name(name)
                 .state(DockerProjectDto.ContainerState.STOPPED)

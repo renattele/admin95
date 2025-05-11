@@ -23,3 +23,10 @@ const formDataToJson = (form) => {
     form.forEach((value, key) => object[key] = value);
     return object;
 };
+
+const fetchHandler = errorMessage => {
+    return (response) => {
+        if (response.ok) reload();
+        else alert(errorMessage);
+    };
+}

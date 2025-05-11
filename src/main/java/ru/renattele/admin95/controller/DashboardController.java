@@ -6,22 +6,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import ru.renattele.admin95.api.DashboardApi;
 import ru.renattele.admin95.model.SystemMetricsEntity;
+import ru.renattele.admin95.service.ChartService;
 import ru.renattele.admin95.service.SystemMetricsService;
+import ru.renattele.admin95.util.ConcurrentUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class DashboardController implements DashboardApi {
     private final SystemMetricsService systemMetricsService;
 
-    @Value("${dashboard.base-url}")
-    private String baseUrl;
+    private final ChartService chartService;
 
     @Value("${dashboard.displayed-hours}")
     private int displayedHours;
@@ -31,20 +31,25 @@ public class DashboardController implements DashboardApi {
         var endTime = LocalDateTime.now();
         var startTime = endTime.minusHours(displayedHours);
         var metrics = systemMetricsService.getSystemMetricsHourly(startTime, endTime);
-        model.addAttribute("CPU_USAGE_URL", getUrlFor(metrics, SystemMetricsEntity::getCpuUsage));
-        model.addAttribute("CPU_TEMPERATURE_URL", getUrlFor(metrics, SystemMetricsEntity::getCpuTemperature));
-        model.addAttribute("RAM_URL", getUrlFor(metrics, SystemMetricsEntity::getRamUsage));
-        model.addAttribute("DISK_URL", getUrlFor(metrics, SystemMetricsEntity::getDiskUsage));
+        var urls = ConcurrentUtil.asyncList(
+                () -> getUrlFor(metrics, SystemMetricsEntity::getCpuUsage),
+                () -> getUrlFor(metrics, SystemMetricsEntity::getCpuTemperature),
+                () -> getUrlFor(metrics, SystemMetricsEntity::getRamUsage),
+                () -> getUrlFor(metrics, SystemMetricsEntity::getDiskUsage)
+        );
+        model.addAttribute("CPU_USAGE_URL", urls.get(0));
+        model.addAttribute("CPU_TEMPERATURE_URL", urls.get(1));
+        model.addAttribute("RAM_URL", urls.get(2));
+        model.addAttribute("DISK_URL", urls.get(3));
         return "dashboard";
     }
 
-    private String getSpecificQuery(
+    private <T> List<T> getSpecificQuery(
             List<SystemMetricsEntity> metrics,
-            Function<SystemMetricsEntity, Object> function) {
+            Function<SystemMetricsEntity, T> function) {
         return metrics.stream()
                 .map(function)
-                .map(Object::toString)
-                .collect(Collectors.joining(","));
+                .toList();
     }
 
     private String getUrlFor(List<SystemMetricsEntity> metrics, ToDoubleFunction<SystemMetricsEntity> function) {
@@ -52,7 +57,8 @@ public class DashboardController implements DashboardApi {
 
         var dateFormatter = DateTimeFormatter.ofPattern("HH:mm");
         var labelsQuery = getSpecificQuery(metrics, e -> e.getTimestamp().format(dateFormatter));
-        return baseUrl.replace("{data}", dataQuery)
-                .replace("{labels}", labelsQuery);
+        return chartService.createChartUrl(
+                dataQuery, labelsQuery
+        );
     }
 }

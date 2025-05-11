@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
 
     compileOnly("org.springframework.boot:spring-boot-starter-tomcat")
     compileOnly("org.projectlombok:lombok")
@@ -40,6 +41,7 @@ dependencies {
     implementation("io.minio:minio:8.5.13")
     implementation("com.github.jnr:jnr-unixsocket:0.38.17")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:3.12.1")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

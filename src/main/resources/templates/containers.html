@@ -16,7 +16,7 @@
         statusIcon.src = successIcon;
         const sendUpdateRequest = debounce(2000, async () => {
             const text = textEditor.value;
-            const link = linkEditor.value;
+            const link = linkEditor ? linkEditor.value : "";
             const data = {
                 "link": link,
                 "content": text
@@ -46,9 +46,11 @@
         textEditor.addEventListener('input', () => {
             updateData();
         });
-        linkEditor.addEventListener('input', () => {
-            updateData();
-        });
+        if (linkEditor) {
+            linkEditor.addEventListener('input', () => {
+                updateData();
+            });
+        }
         textEditor.addEventListener('keydown', function (e) {
             if (e.key == 'Tab') {
                 e.preventDefault();
@@ -74,7 +76,7 @@
                 const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/remove';
                 fetch(endpoint, {
                     method: 'PATCH'
-                }).then(reload);
+                }).then(fetchHandler(`Failed to remote tag from project`));
             });
         });
 
@@ -89,7 +91,7 @@
                     const endpoint = '[(@{/admin/tags/})]' + tag;
                     fetch(endpoint, {
                         method: 'DELETE'
-                    }).then(reload);
+                    }).then(fetchHandler(`Failed to permanently delete tag`));
                 }
             });
         });
@@ -101,20 +103,45 @@
                 const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/add';
                 fetch(endpoint, {
                     method: 'PATCH'
-                }).then(reload);
+                }).then(fetchHandler(`Failed to create tag`));
             });
         });
 
         const addTagEditor = document.getElementById('input-new-tag');
         const addTagButton = document.getElementById('button-add-tag');
-        addTagButton.addEventListener('click', () => {
-            const tag = addTagEditor.value;
-            if (tag.length > 0) {
-                const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/add';
-                fetch(endpoint, {
-                    method: 'PATCH'
-                }).then(reload);
-            }
+        if (addTagButton) {
+            addTagButton.addEventListener('click', () => {
+                const tag = addTagEditor.value;
+                if (tag.length > 0) {
+                    const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/add';
+                    fetch(endpoint, {
+                        method: 'PATCH'
+                    }).then(fetchHandler(`Failed to create tag`));
+                }
+            });
+        }
+    });
+</script>
+<script defer th:if="${currentDockerProject != null}" th:inline="javascript">
+    const host = window.location.host;
+    document.addEventListener('DOMContentLoaded', () => {
+        const socket = new WebSocket(`ws://${host}/ws/admin/containers/logs/` + [[${currentDockerProject.name}]]);
+        socket.addEventListener('open', () => {
+            console.log('WebSocket connection established');
+        });
+
+        socket.addEventListener('message', (event) => {
+            const containerLogs = document.getElementById('container-logs');
+            console.log("Received message:", event.data);
+            containerLogs.textContent = event.data;
+        });
+
+        socket.addEventListener('close', () => {
+            console.log('WebSocket connection closed');
+        });
+
+        socket.addEventListener('error', (error) => {
+            console.error('WebSocket error:', error);
         });
     });
 </script>
@@ -130,7 +157,7 @@
                     const endpoint = '[(@{/admin/containers/})]' + file;
                     fetch(endpoint, {
                         method: 'DELETE'
-                    }).then(reload);
+                    }).then(fetchHandler("Failed to delete file"));
                 }
             });
         });
@@ -143,18 +170,24 @@
                 const endpoint = '[(@{/admin/containers/})]' + file + '/' + action;
                 fetch(endpoint, {
                     method: 'POST'
-                }).then(reload);
+                }).then(fetchHandler(`Failed to ${action} project`));
             });
         });
 
+        const nameRegex = "^[a-zA-Z0-9_\\-\\.]+$";
         const createServiceForm = document.getElementById('create-service-form');
         createServiceForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const formData = new FormData(createServiceForm);
+            const name = formData.get("name");
+            if (!name.match(nameRegex)) {
+                alert("Invalid name. Only alphanumeric characters, underscores, dashes, and dots are allowed.");
+                return;
+            }
             const endpoint = '[(@{/admin/containers/service/})]' + formData.get("name");
             fetch(endpoint, {
                 method: 'POST'
-            }).then(reload);
+            }).then(fetchHandler(`Failed to create project`));
         });
 
         const createFileForm = document.getElementById('create-file-form');
@@ -162,9 +195,14 @@
             event.preventDefault();
             const formData = new FormData(createFileForm);
             const endpoint = '[(@{/admin/containers/file/})]' + formData.get("name");
+            const name = formData.get("name");
+            if (!name.match(nameRegex)) {
+                alert("Invalid name. Only alphanumeric characters, underscores, dashes, and dots are allowed.");
+                return;
+            }
             fetch(endpoint, {
                 method: 'POST'
-            }).then(reload);
+            }).then(fetchHandler(`Failed to create file. Make sure the name is correct`));
         });
     });
 </script>
@@ -223,6 +261,7 @@
                     <img th:src="@{/gifs/trash.gif}"
                          alt="Trash Image"
                          data-action="delete"
+                         th:data-file-id="${file.name}"
                          role="button">
                 </li>
             </th:block>

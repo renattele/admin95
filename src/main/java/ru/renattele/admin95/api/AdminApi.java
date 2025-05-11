@@ -16,4 +16,8 @@ public interface AdminApi {
     @PutMapping
     @ResponseBody
     void updateAdmin(@RequestBody AdminForm form);
+
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    void deleteAdmin(@PathVariable("id") Long id);
 }

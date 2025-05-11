@@ -33,7 +33,7 @@ public class DefaultUserCreatorConfig {
         var username = defaultUser;
         var password = passwordGeneratorService.generatePassword();
         userService.createUser(username, password,
-                Arrays.stream(UserDto.Role.values()).toList()
+                Arrays.stream(UserDto.Role.values()).toList(), true
         );
         var message = generateMessage(username, password).lines();
         message.forEach(log::warn);

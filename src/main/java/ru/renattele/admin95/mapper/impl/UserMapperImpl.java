@@ -47,9 +47,6 @@ public class UserMapperImpl implements UserMapper {
             case ACCESS_BACKUPS -> {
                 return UserDto.Role.ACCESS_BACKUPS;
             }
-            case ACCESS_USERS -> {
-                return UserDto.Role.ACCESS_USERS;
-            }
             default -> throw new IllegalStateException("Unexpected value: " + role);
         }
     }
@@ -67,9 +64,6 @@ public class UserMapperImpl implements UserMapper {
             }
             case ACCESS_BACKUPS -> {
                 return UserEntity.Role.ACCESS_BACKUPS;
-            }
-            case ACCESS_USERS -> {
-                return UserEntity.Role.ACCESS_USERS;
             }
             default -> throw new IllegalStateException("Unexpected value: " + role);
         }

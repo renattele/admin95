@@ -47,7 +47,6 @@ public class UserEntity {
         ACCESS_CONTAINERS,
         ACCESS_TERMINAL,
         ACCESS_BACKUPS,
-        ACCESS_USERS
     }
 
     public enum State {

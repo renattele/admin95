@@ -15,7 +15,6 @@ public class AdminForm {
     @NotBlank
     private String name;
 
-    @NotBlank
     private String password;
 
     @JsonProperty("ACCESS_DASHBOARD")
@@ -26,8 +25,6 @@ public class AdminForm {
     private boolean accessTerminal;
     @JsonProperty("ACCESS_BACKUPS")
     private boolean accessBackups;
-    @JsonProperty("ACCESS_USERS")
-    private boolean accessUsers;
 
     private boolean enabled;
 }

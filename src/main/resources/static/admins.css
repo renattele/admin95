@@ -23,3 +23,9 @@
     background-size: 100% 100%;
     padding: 20px 40px;
 }
+
+img[data-action="delete"] {
+    height: 36px;
+    margin-bottom: -4px;
+    padding-left: 20px;
+}

@@ -15,22 +15,16 @@ public interface UserService {
     UserDto createUser(
             String name,
             String password,
-            List<UserDto.Role> roles
+            List<UserDto.Role> roles,
+            boolean enabled
     );
 
-    boolean updatePassword(
+    UserDto updateUser(
             String name,
-            String oldPassword,
-            String newPassword
+            @Nullable String password,
+            List<UserDto.Role> roles,
+            boolean enabled
     );
 
-    boolean updateRoles(
-            String name,
-            List<UserDto.Role> roles
-    );
-
-    boolean updateState(
-            String name,
-            UserDto.State state
-    );
+    void deleteUser(Long id);
 }

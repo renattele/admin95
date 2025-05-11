@@ -6,60 +6,49 @@
 <body>
 <script defer th:inline="javascript">
     document.addEventListener('DOMContentLoaded', () => {
-        const buttonCreateBackup = document.getElementById('button-create-backup');
-        buttonCreateBackup.addEventListener('click', () => {
-            const endpoint = '[(@{/admin/backups})]';
-            fetch(endpoint, {
-                method: 'POST'
-            }).then(reload);
-        });
-
-        const deleteButtons = document.querySelectorAll('img[data-action="delete"][data-backup-id]');
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.preventDefault();
-                const backupId = button.getAttribute('data-backup-id');
-                console.log(backupId);
-                const endpoint = '[(@{/admin/backups/})]' + backupId;
+        const admins = document.querySelectorAll('form[data-user-id]')
+        admins.forEach(adminForm => {
+            adminForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const formData = new FormData(adminForm);
+                const body = JSON.stringify(formDataToJson(formData));
+                console.log(body);
+                const userId = adminForm.getAttribute('data-user-id');
+                const method = userId === 'new' ? 'POST' : 'PUT';
+                const endpoint = '[(@{/admin/admins})]';
                 fetch(endpoint, {
-                    method: 'DELETE'
-                }).then(reload);
+                    method: method,
+                    body: body,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        reload();
+                    } else {
+                        alert("Failed to update admin.");
+                    }
+                });
             });
         });
 
-        const deleteBackupForm = document.getElementById('form-delete-backups');
-        deleteBackupForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const formData = new FormData(deleteBackupForm);
-            const body = JSON.stringify(formDataToJson(formData));
-            console.log(body);
-            const endpoint = '[(@{/admin/backups/delete-count-query})]';
-            fetch(endpoint, {
-                method: 'POST',
-                body: body,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => response.text()).then(text => {
-                if (text === '0') {
-                    alert('No backups found for the specified criteria.');
-                    return
-                }
-                if (confirm("Are you sure you want to delete " + text + " backups? This action cannot be undone!")) {
-                    const deleteEndpoint = '[(@{/admin/backups/query})]';
-                    fetch(deleteEndpoint, {
+        const deleteButtons = document.querySelectorAll('img[data-action="delete"][data-user-id]');
+        deleteButtons.forEach(deleteButton => {
+            deleteButton.addEventListener('click', e => {
+                e.preventDefault();
+                const userId = deleteButton.getAttribute('data-user-id');
+                const name = deleteButton.getAttribute('data-user-name');
+                if (confirm("Are you sure you want to delete admin '" + name + "'?")) {
+                    const endpoint = '[(@{/admin/admins/})]' + userId;
+                    fetch(endpoint, {
                         method: 'DELETE',
-                        body: body,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
                     }).then(response => {
                         if (response.ok) {
                             reload();
                         } else {
-                            alert("Failed to delete backups.");
+                            alert("Failed to delete admin.");
                         }
-                    })
+                    });
                 }
             });
         });
@@ -73,32 +62,38 @@
         <label>
             Name:
             <br>
-            <input name="name" placeholder="Name" th:value="${username}" type="text">
+            <input name="name" placeholder="Name" required th:value="${username}" type="text">
         </label>
         <br>
         <br>
         <label>
             Password:
             <br>
-            <input name="password" placeholder="New Password" type="password">
+            <input name="password" placeholder="New Password" th:required="${id == 'new'}" type="password">
         </label>
         <br>
         Access:
         <br>
         <label th:each="role: ${roles}">
             <input th:checked="${admin_roles != null && #lists.contains(admin_roles, role)}" th:name="${role.name()}"
-                   type="checkbox">
+                   type="checkbox" value="true">
             <th:block th:text="#{${role.messageKey}}"/>
             <br>
         </label>
         <br>
         <label>
             <input th:checked="${state == 'OK'}" th:name="enabled"
-                   type="checkbox">
+                   type="checkbox" value="true">
             Enabled
             <br>
         </label>
         <button th:text="${button_message}" type="submit">Update!</button>
+        <img alt="Delete user"
+             th:data-action="delete"
+             th:data-user-id="${id}"
+             th:data-user-name="${username}"
+             th:if="${id} != 'new'"
+             th:src="@{/gifs/trash.gif}">
     </form>
 </th:block>
 <main>
@@ -106,12 +101,12 @@
         <th:block th:include="~{fragments :: header_title('Admins')}"/>
     </h1>
     <ul id="admins-list">
-        New User:
+        New Admin:
         <li>
             <form th:replace="~{admins :: admin_form('new', '', ${{}}, 'OK', 'Create!')}"></form>
         </li>
         <li th:each="admin: ${admins}">
-            <form th:replace="~{admins :: admin_form(admin.id, admin.name, admin.roles, admin.state.name, 'Update!')}"></form>
+            <form th:replace="~{admins :: admin_form(${admin.id}, ${admin.name}, ${admin.roles}, ${admin.state.name}, 'Update!')}"></form>
         </li>
     </ul>
 </main>

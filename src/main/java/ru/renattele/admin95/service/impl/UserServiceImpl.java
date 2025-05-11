@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.renattele.admin95.dto.UserDto;
+import ru.renattele.admin95.exception.ResourceNotFoundException;
 import ru.renattele.admin95.mapper.UserMapper;
 import ru.renattele.admin95.repository.UserRepository;
 import ru.renattele.admin95.service.UserService;
@@ -40,12 +41,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(String name, String password, List<UserDto.Role> roles) {
+    public UserDto createUser(String name,
+                              String password,
+                              List<UserDto.Role> roles,
+                              boolean enabled) {
         var dto = UserDto.builder()
                 .name(name)
                 .password(passwordEncoder.encode(password))
                 .roles(roles)
-                .state(UserDto.State.OK)
+                .state(enabled ? UserDto.State.OK : UserDto.State.DISABLED)
                 .createdAt(LocalDateTime.now())
                 .build();
         var entity = userMapper.toEntity(dto);
@@ -54,36 +58,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updatePassword(String name, String oldPassword, String newPassword) {
-        var entity = userRepository.findByNameEquals(name);
-        if (entity.isEmpty()) return false;
-        if (passwordEncoder.matches(oldPassword, entity.get().getPassword())) return false;
-        entity.get().setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(entity.get());
-        return true;
+    public UserDto updateUser(String name,
+                              String password,
+                              List<UserDto.Role> roles,
+                              boolean enabled) {
+        var userDto = getUserByName(name);
+        if (userDto == null) throw new ResourceNotFoundException();
+        var updatedDtoBuilder = userDto.toBuilder()
+                .name(name)
+                .roles(roles)
+                .state(enabled ? UserDto.State.OK : UserDto.State.DISABLED);
+        if (password != null && !password.isEmpty()) updatedDtoBuilder.password(passwordEncoder.encode(password));
+        var updatedDto = updatedDtoBuilder.build();
+        var updatedEntity = userRepository.save(userMapper.toEntity(updatedDto));
+        return userMapper.toDto(updatedEntity);
     }
 
     @Override
-    public boolean updateRoles(String name, List<UserDto.Role> roles) {
-        var entity = userRepository.findByNameEquals(name);
-        if (entity.isEmpty()) return false;
-        var dto = userMapper.toDto(entity.get());
-        dto.setRoles(roles);
-
-        var newEntity = userMapper.toEntity(dto);
-        userRepository.save(newEntity);
-        return true;
-    }
-
-    @Override
-    public boolean updateState(String name, UserDto.State state) {
-        var entity = userRepository.findByNameEquals(name);
-        if (entity.isEmpty()) return false;
-        var dto = userMapper.toDto(entity.get());
-        dto.setState(state);
-
-        var newEntity = userMapper.toEntity(dto);
-        userRepository.save(newEntity);
-        return true;
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

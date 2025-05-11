@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
@@ -26,8 +26,7 @@ public class UserDto {
         ACCESS_DASHBOARD("access.dashboard"),
         ACCESS_CONTAINERS("access.containers"),
         ACCESS_TERMINAL("access.terminal"),
-        ACCESS_BACKUPS("access.backups"),
-        ACCESS_USERS("access.users");
+        ACCESS_BACKUPS("access.backups");
 
         private final String messageKey;
     }

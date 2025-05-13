@@ -6,7 +6,6 @@ import ru.renattele.admin95.dto.BackupDto;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public interface BackupService {
     List<BackupDto> getAll();
@@ -15,7 +14,7 @@ public interface BackupService {
 
     InputStream getBackupStream(BackupDto backupDto);
 
-    CompletableFuture<Void> runBackupInBackground();
+    void runBackupInBackground();
 
     void deleteBackup(BackupDto backupDto);
 

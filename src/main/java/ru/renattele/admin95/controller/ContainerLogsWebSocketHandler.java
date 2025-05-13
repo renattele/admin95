@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.reactive.socket.WebSocketSession;
 import ru.renattele.admin95.service.docker.DockerProjectQueryService;
 import ru.renattele.admin95.util.RoomWebSocketHandler;
 
@@ -29,7 +29,7 @@ public class ContainerLogsWebSocketHandler extends RoomWebSocketHandler {
 
     @Override
     public String extractRoomId(WebSocketSession session) {
-        String path = session.getUri().getPath();
+        String path = session.getHandshakeInfo().getUri().getPath();
         String[] pathSegments = path.split("/");
 
         if (pathSegments.length >= 6) {

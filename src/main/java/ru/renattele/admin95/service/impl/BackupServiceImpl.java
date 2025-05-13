@@ -28,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -99,7 +98,7 @@ public class BackupServiceImpl implements BackupService {
     @Override
     @Async
     @Scheduled(cron = "${backup.cron}")
-    public CompletableFuture<Void> runBackupInBackground() {
+    public void runBackupInBackground() {
         var currentDateTime = LocalDateTime.now();
         var formatter = DateTimeFormatter.ofPattern(backupDateFormat);
         var backupName = backupNameTemplate.replace("{date}",
@@ -117,7 +116,6 @@ public class BackupServiceImpl implements BackupService {
         backupEntity.setSize(backupFile.length());
         backupEntity.setMessage(message);
         backupRepository.save(backupEntity);
-        return CompletableFuture.completedFuture(null);
     }
 
     @Override

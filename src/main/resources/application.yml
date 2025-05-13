@@ -1,0 +1,58 @@
+spring:
+  config:
+    import: optional:admin.properties
+  application:
+    name: admin95
+  datasource:
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: ${db.driver}
+  jpa:
+    database-platform: ${db.jpa-driver}
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
+  web:
+    resources:
+      static-locations: file:src/main/resources/static/
+      cache:
+        period: 0
+  messages:
+    basename: messages/messages
+
+  cloud:
+    gateway:
+      routes:
+        - id: wetty-route
+          uri: http://localhost:3001
+          predicates:
+            - Path=/admin/wetty/**
+          filters:
+            # No need to strip prefix - we'll preserve the path
+            - RewritePath=/admin/(?<segment>.*), /admin/$\{segment}
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+  main:
+    web-application-type: reactive
+
+logging:
+  level:
+    web: DEBUG
+    org.springframework.web.servlet.handler.SimpleUrlHandlerMapping: ERROR
+
+server:
+  port: 8080
+  error:
+    path: /error

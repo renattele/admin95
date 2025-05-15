@@ -25,7 +25,7 @@ public interface BackupApiApi {
                     content = @Content(mediaType = "application/octet-stream")),
             @ApiResponse(responseCode = "404", description = "Backup file not found")
     })
-    @GetMapping(value = "/{id}/{name}")
+    @GetMapping(value = "/{id}/{name}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     ResponseEntity<Resource> downloadBackup(
             @Parameter(description = "Backup ID") @PathVariable("id") Long id,

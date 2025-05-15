@@ -52,7 +52,8 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(BindException.class)
-    public Object handleBindException(HttpServletRequest request) {
+    public Object handleBindException(HttpServletRequest request, BindException e) {
+        log.error(e.getMessage(), e);
         return handleException(request, HttpStatus.BAD_REQUEST, "Invalid request");
     }
 

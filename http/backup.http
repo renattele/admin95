@@ -1,6 +1,46 @@
 @host=http://localhost:8080
 @auth_token=eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJpZCI6MSwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDczMDIyODcsImV4cCI6MTc0NzQ0NjI4N30.Hv09DuOY2nHZObVLSu0yjwmk1kHlrGybdeIZbM-yazY
+@backup_id=1530
+@backup_name=backup_2025-05-15.rar
 
 GET {{host}}/api/admin/backup
 Accept: application/json
 Authorization: Bearer {{auth_token}}
+
+### Download a specific backup file
+GET {{host}}/api/admin/backup/{{backup_id}}/{{backup_name}}
+Authorization: Bearer {{auth_token}}
+
+### Count backups for deletion
+POST {{host}}/api/admin/backup/delete-count-query
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "age": "ANY_TIME",
+  "minSize": 0,
+  "maxSize": 1,
+  "maxSizeUnit": "GIGABYTE",
+  "minSizeUnit": "GIGABYTE"
+}
+
+### Create a new backup
+POST {{host}}/api/admin/backup
+Authorization: Bearer {{auth_token}}
+
+### Delete a specific backup
+DELETE {{host}}/api/admin/backup/{{backup_id}}
+Authorization: Bearer {{auth_token}}
+
+### Delete backups by query
+DELETE {{host}}/api/admin/backup/query
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "age": "ANY_TIME",
+  "minSize": 0,
+  "maxSize": 1,
+  "maxSizeUnit": "GIGABYTE",
+  "minSizeUnit": "GIGABYTE"
+}

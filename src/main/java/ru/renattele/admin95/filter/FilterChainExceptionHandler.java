@@ -21,7 +21,6 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
-
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {

@@ -16,7 +16,7 @@
                 const userId = adminForm.getAttribute('data-user-id');
                 const method = userId === 'new' ? 'POST' : 'PUT';
                 const endpoint = '[(@{/admin/admins})]';
-                fetch(endpoint, {
+                serverFetch(endpoint, {
                     method: method,
                     body: body,
                     headers: {
@@ -34,7 +34,7 @@
                 const name = deleteButton.getAttribute('data-user-name');
                 if (confirm("Are you sure you want to delete admin '" + name + "'?")) {
                     const endpoint = '[(@{/admin/admins/})]' + userId;
-                    fetch(endpoint, {
+                    serverFetch(endpoint, {
                         method: 'DELETE',
                     }).then(fetchHandler(`Failed to delete tag`));
                 }

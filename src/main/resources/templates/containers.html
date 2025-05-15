@@ -23,7 +23,7 @@
             };
             const endpoint = '[(@{/admin/containers/})]' + [[${currentFile.name}]];
             try {
-                const response = await fetch(endpoint, {
+                const response = await serverFetch(endpoint, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -74,7 +74,7 @@
             button.addEventListener('click', () => {
                 const tag = button.getAttribute('data-tag-id');
                 const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/remove';
-                fetch(endpoint, {
+                serverFetch(endpoint, {
                     method: 'PATCH'
                 }).then(fetchHandler(`Failed to remote tag from project`));
             });
@@ -89,7 +89,7 @@
                     " This will delete tag from all services"
                 if (confirm(message)) {
                     const endpoint = '[(@{/admin/tags/})]' + tag;
-                    fetch(endpoint, {
+                    serverFetch(endpoint, {
                         method: 'DELETE'
                     }).then(fetchHandler(`Failed to permanently delete tag`));
                 }
@@ -101,7 +101,7 @@
             button.addEventListener('click', () => {
                 const tag = button.getAttribute('data-tag-id');
                 const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/add';
-                fetch(endpoint, {
+                serverFetch(endpoint, {
                     method: 'PATCH'
                 }).then(fetchHandler(`Failed to create tag`));
             });
@@ -114,7 +114,7 @@
                 const tag = addTagEditor.value;
                 if (tag.length > 0) {
                     const endpoint = '[(@{/admin/tags/})]' + `[(${currentFile.name})]` + '/' + tag + '/add';
-                    fetch(endpoint, {
+                    serverFetch(endpoint, {
                         method: 'PATCH'
                     }).then(fetchHandler(`Failed to create tag`));
                 }
@@ -155,7 +155,7 @@
                 const file = button.getAttribute('data-file-id');
                 if (confirmDeletion(file)) {
                     const endpoint = '[(@{/admin/containers/})]' + file;
-                    fetch(endpoint, {
+                    serverFetch(endpoint, {
                         method: 'DELETE'
                     }).then(fetchHandler("Failed to delete file"));
                 }
@@ -168,7 +168,7 @@
                 const file = button.getAttribute('data-file-id');
                 const action = button.src.endsWith(projectRunningIcon) ? 'stop' : 'start';
                 const endpoint = '[(@{/admin/containers/})]' + file + '/' + action;
-                fetch(endpoint, {
+                serverFetch(endpoint, {
                     method: 'POST'
                 }).then(fetchHandler(`Failed to ${action} project`));
             });
@@ -185,7 +185,7 @@
                 return;
             }
             const endpoint = '[(@{/admin/containers/service/})]' + formData.get("name");
-            fetch(endpoint, {
+            serverFetch(endpoint, {
                 method: 'POST'
             }).then(fetchHandler(`Failed to create project`));
         });
@@ -200,7 +200,7 @@
                 alert("Invalid name. Only alphanumeric characters, underscores, dashes, and dots are allowed.");
                 return;
             }
-            fetch(endpoint, {
+            serverFetch(endpoint, {
                 method: 'POST'
             }).then(fetchHandler(`Failed to create file. Make sure the name is correct`));
         });

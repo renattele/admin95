@@ -13,9 +13,11 @@ public class AppErrorController implements ErrorController {
     public String handleError(HttpServletRequest request) {
         var status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         if (status == null) return "error-500";
-        var code = (Integer) status;
+        int code = (Integer) status;
         if (code == HttpStatus.NOT_FOUND.value()) {
             return "error-404";
+        } else if (code == HttpStatus.FORBIDDEN.value()) {
+            return "error-403";
         } else {
             return "error-500";
         }

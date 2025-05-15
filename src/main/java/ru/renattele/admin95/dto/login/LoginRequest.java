@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class LoginRequest {
     @NotEmpty(message = "Name should not be empty")
-    private String name;
+    private String username;
     @NotEmpty(message = "Password should not be empty")
     private String password;
 }

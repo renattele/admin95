@@ -9,7 +9,7 @@
         const buttonCreateBackup = document.getElementById('button-create-backup');
         buttonCreateBackup.addEventListener('click', () => {
             const endpoint = '[(@{/admin/backups})]';
-            fetch(endpoint, {
+            serverFetch(endpoint, {
                 method: 'POST'
             }).then(fetchHandler(`Failed to create backup`));
         });
@@ -21,7 +21,7 @@
                 const backupId = button.getAttribute('data-backup-id');
                 console.log(backupId);
                 const endpoint = '[(@{/admin/backups/})]' + backupId;
-                fetch(endpoint, {
+                serverFetch(endpoint, {
                     method: 'DELETE'
                 }).then(fetchHandler(`Failed to delete backup`));
             });
@@ -34,7 +34,7 @@
             const body = JSON.stringify(formDataToJson(formData));
             console.log(body);
             const endpoint = '[(@{/admin/backups/delete-count-query})]';
-            fetch(endpoint, {
+            serverFetch(endpoint, {
                 method: 'POST',
                 body: body,
                 headers: {
@@ -47,7 +47,7 @@
                 }
                 if (confirm("Are you sure you want to delete " + text + " backups? This action cannot be undone!")) {
                     const deleteEndpoint = '[(@{/admin/backups/query})]';
-                    fetch(deleteEndpoint, {
+                    serverFetch(deleteEndpoint, {
                         method: 'DELETE',
                         body: body,
                         headers: {

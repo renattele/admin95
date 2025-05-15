@@ -6,6 +6,17 @@
     <link rel="stylesheet" th:href="@{/style.css}">
     <link rel="stylesheet" th:href="${style}">
     <script th:src="@{/script.js}" type="application/javascript"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById("dashboard-button-logout");
+            logoutButton.addEventListener('click', e => {
+                e.preventDefault();
+                serverFetch("/logout", {
+                    method: 'POST'
+                }).then(fetchHandler("Failed to logout"));
+            })
+        });
+    </script>
 </head>
 <body>
 <header th:fragment="header">
@@ -31,7 +42,7 @@
             <img th:src="@{/gifs/admin.gif}" alt="Hello Kitty Image">
             <p>Admins</p>
         </a>
-        <a th:href="@{/logout}">
+        <a href="#" id="dashboard-button-logout">
             <img th:src="@{/gifs/logout.gif}" alt="Leave Image">
             <p>Logout</p>
         </a>

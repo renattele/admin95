@@ -1,35 +1,21 @@
 package ru.renattele.admin95.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.HandlerMapping;
-import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.reactive.socket.WebSocketHandler;
-import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import ru.renattele.admin95.controller.ContainerLogsWebSocketHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Configuration
+@EnableWebSocket
 @RequiredArgsConstructor
-public class WebsocketConfig {
+public class WebsocketConfig implements WebSocketConfigurer {
     private final ContainerLogsWebSocketHandler containerLogsWebSocketHandler;
 
-    @Bean
-    public HandlerMapping webSocketHandlerMapping() {
-        Map<String, WebSocketHandler> map = new HashMap<>();
-        map.put("/ws/admin/containers/logs/{id}", containerLogsWebSocketHandler);
-
-        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
-        handlerMapping.setUrlMap(map);
-        handlerMapping.setOrder(-1);
-        return handlerMapping;
-    }
-
-    @Bean
-    public WebSocketHandlerAdapter handlerAdapter() {
-        return new WebSocketHandlerAdapter();
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(containerLogsWebSocketHandler, "/ws/admin/containers/logs/{id}")
+                .setAllowedOrigins("*");
     }
 }

@@ -26,31 +26,14 @@ spring:
         period: 0
   messages:
     basename: messages/messages
-
-  cloud:
-    gateway:
-      routes:
-        - id: wetty-route
-          uri: http://localhost:3001
-          predicates:
-            - Path=/admin/wetty/**
-          filters:
-            # No need to strip prefix - we'll preserve the path
-            - RewritePath=/admin/(?<segment>.*), /admin/$\{segment}
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-
-  main:
-    web-application-type: reactive
+  mvc:
+    log-request-details: true
 
 logging:
   level:
     web: DEBUG
     org.springframework.web.servlet.handler.SimpleUrlHandlerMapping: ERROR
+    ru.renattele: DEBUG
 
 server:
   port: 8080

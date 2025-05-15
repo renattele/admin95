@@ -30,3 +30,25 @@ const fetchHandler = errorMessage => {
         else alert(errorMessage);
     };
 }
+
+const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+
+/**
+ * Enhanced fetch that automatically adds CSRF token to requests
+ * @param {string} url - The URL to fetch
+ * @param {object} options - Fetch options
+ * @returns {Promise} - Fetch promise
+ */
+const serverFetch = (url, options = {}) => {
+    // Create a new options object with defaults
+    const fetchOptions = {
+        ...options,
+        headers: {
+            ...options.headers,
+            'X-XSRF-TOKEN': csrfToken
+        }
+    };
+
+    // Return the native fetch with enhanced options
+    return fetch(url, fetchOptions);
+};

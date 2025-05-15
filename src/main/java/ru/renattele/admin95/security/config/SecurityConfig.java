@@ -1,38 +1,72 @@
 package ru.renattele.admin95.security.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import ru.renattele.admin95.filter.FilterChainExceptionHandler;
 
 @Configuration
-@EnableReactiveMethodSecurity
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final FilterChainExceptionHandler exceptionHandlerFilter;
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    public SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
         return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(exchange -> exchange.anyExchange().permitAll()
-                        //         .pathMatchers("/", "/login").permitAll()
-                        //         .anyExchange().authenticated()
+                .csrf(c -> c.csrfTokenRepository(
+                                        CookieCsrfTokenRepository.withHttpOnlyFalse()
+                                ).csrfTokenRequestHandler(csrfTokenRequestAttributeHandler())
+                                .ignoringRequestMatchers("/api/**")
                 )
-                .formLogin(login -> login.loginPage("/login")
-                        .authenticationSuccessHandler(
-                                new RedirectServerAuthenticationSuccessHandler("/admin/dashboard")
-                        )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/**").authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().permitAll()
                 )
-                .logout(logout -> logout.logoutUrl("/logout"))
-                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .formLogin(f -> f.loginPage("/login")
+                        .defaultSuccessUrl("/admin")
+                        .failureUrl("/login?error")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .invalidateHttpSession(true)
+                        .logoutSuccessUrl("/login")
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
+                .addFilterBefore(exceptionHandlerFilter, LogoutFilter.class)
                 .build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler() {
+        var handler = new CsrfTokenRequestAttributeHandler();
+        handler.setCsrfRequestAttributeName(null);
+        return handler;
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+        var authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        return authenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationProvider authenticationProvider) {
+        return authenticationProvider::authenticate;
     }
 }

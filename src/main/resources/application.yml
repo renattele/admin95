@@ -28,6 +28,8 @@ spring:
     basename: messages/messages
   mvc:
     log-request-details: true
+  main:
+    allow-bean-definition-overriding: true
 
 logging:
   level:

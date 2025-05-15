@@ -1,7 +1,7 @@
 
 ### Define variables
 @host = http://localhost:8080
-@auth_token=eyJhbGiOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJpZCI6MSwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDczMDIyODcsImV4cCI6MTc0NzQ0NjI4N30.Hv09DuOY2nHZObVLSu0yjwmk1kHlrGybdeIZbM-yazY
+@auth_token=eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJpZCI6MSwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDczMDIyODcsImV4cCI6MTc0NzQ0NjI4N30.Hv09DuOY2nHZObVLSu0yjwmk1kHlrGybdeIZbM-yazY
 
 ### Check Terminal Access
 GET {{host}}/api/auth/check/terminal

@@ -10,7 +10,7 @@ services:
       - caddy:/var/www/html
 
   app:
-    build: renattele/admin95
+    image: renattele/admin95:latest
     environment:
       DB_URL: jdbc:postgresql://db:5432/automania
       DB_USERNAME: postgres

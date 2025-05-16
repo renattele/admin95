@@ -2,9 +2,5 @@
     reverse_proxy {$APP_HOST}
 }
 {$TERMINAL_DOMAIN} {
-    forward_auth {$APP_HOST} {
-        uri /auth/check/terminal
-    }
-
     reverse_proxy {$TERMINAL_HOST}
 }

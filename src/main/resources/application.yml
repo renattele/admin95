@@ -30,8 +30,6 @@ spring:
         period: 0
   messages:
     basename: messages/messages
-  mvc:
-    log-request-details: true
   main:
     allow-bean-definition-overriding: true
 
@@ -45,3 +43,4 @@ server:
   port: 8080
   error:
     path: /error
+  forward-headers-strategy: native

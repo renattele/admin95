@@ -275,6 +275,25 @@
         </form>
     </aside>
     <form id="edit-form" th:if="${currentFile != null}">
+        <th:block th:if="${currentDockerProject != null}">
+            <h3>Tags</h3>
+            <ul id="list-tags">
+                <li th:each="tag: ${currentDockerProject.tags}">
+                    <th:block th:text="${tag.name}"/>
+                    <img alt="Trash Image"
+                         data-action="delete"
+                         th:data-tag-id="${tag.name}"
+                         th:src="@{/gifs/trash.gif}">
+                </li>
+                <li>
+                    <input id="input-new-tag"
+                           name="link"
+                           placeholder="New Tag"
+                           type="text">
+                    <button id="button-add-tag">Add Tag!</button>
+                </li>
+            </ul>
+        </th:block>
         <textarea id="text-editor" placeholder="Edit your content here" th:text="${currentFile.content}"></textarea>
         <th:block th:if="${currentDockerProject != null}">
             <textarea id="container-logs" placeholder="No logs" readonly
@@ -287,25 +306,8 @@
                        placeholder="URL to service"
                        th:value="${currentDockerProject.link}">
             </label>
-            <h3>Tags</h3>
-            <ul id="list-tags">
-                <li th:each="tag: ${currentDockerProject.tags}">
-                    <th:block th:text="${tag.name}"/>
-                    <img th:src="@{/gifs/trash.gif}"
-                         alt="Trash Image"
-                         th:data-tag-id="${tag.name}"
-                         data-action="delete">
-                </li>
-                <li>
-                    <input type="text"
-                           name="link"
-                           id="input-new-tag"
-                           placeholder="New Tag">
-                    <button id="button-add-tag">Add Tag!</button>
-                </li>
-            </ul>
-            <h4>Suggested Tags</h4>
 
+            <h4>Suggested Tags</h4>
             <ul id="list-suggested-tags" th:if="${tags != null}">
                 <li th:each="tag: ${tags}" th:data-tag-id="${tag.name}" data-action="add">
                     <th:block th:text="${tag.name}"/>

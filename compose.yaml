@@ -2,14 +2,10 @@ services:
   caddy:
     image: caddy
     restart: unless-stopped
-    environment:
-      APP_DOMAIN: localhost:8081
-      TERMINAL_DOMAIN: localhost:8082
-      TERMINAL_HOST: webssh:3000
-      APP_HOST: app:8080
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy:/var/www/html
+
   app:
     build: .
     environment:
@@ -23,15 +19,12 @@ services:
 
   db:
     image: 'postgres:latest'
-    env_file: .sample.env
-    ports:
-      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
 
   webssh:
     image: wettyoss/wetty
-    ports:
-      - "3001:3000"
-    command: "--ssh-host=192.168.0.101 --allow-iframe=true --base=/admin/wetty"
+    command: "--ssh-host=localhost --allow-iframe=true --base=/admin/wetty"
 
 volumes:
   db:

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Tag(name = "Terminal", description = "Terminal operations")
 @RequestMapping("/admin/terminal")
 @PreAuthorize("hasRole('ACCESS_TERMINAL')")
-public interface TerminalApi {
+public interface TerminalMvcApi {
     
     /**
      * Displays the terminal dashboard page

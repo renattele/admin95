@@ -25,22 +25,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
     compileOnly("org.springframework.boot:spring-boot-starter-tomcat")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
-    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     "developmentOnly"("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    implementation("io.minio:minio:8.5.13")
-    implementation("com.github.jnr:jnr-unixsocket:0.38.17")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:3.12.1")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
@@ -49,6 +43,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    implementation("commons-io:commons-io:2.19.0")
 }
 
 tasks.test {

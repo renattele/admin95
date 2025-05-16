@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import ru.renattele.admin95.api.AdminApi;
+import ru.renattele.admin95.api.AdminMvcApi;
 import ru.renattele.admin95.dto.UserDto;
 import ru.renattele.admin95.form.AdminForm;
 import ru.renattele.admin95.service.UserService;
@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
-public class AdminsController implements AdminApi {
+public class AdminsController implements AdminMvcApi {
     private final UserService userService;
 
     @Override

@@ -26,7 +26,7 @@ import java.util.Set;
 @Tag(name = "Tags", description = "Tag management operations")
 @RequestMapping("/admin/tags")
 @PreAuthorize("hasRole('ACCESS_CONTAINERS')")
-public interface TagsApi {
+public interface TagsMvcApi {
 
     /**
      * Retrieves all available tags

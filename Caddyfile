@@ -1,10 +1,10 @@
-:8081 {
-    reverse_proxy localhost:8080
+{$APP_DOMAIN} {
+    reverse_proxy {$APP_HOST}
 }
-:8082 {
-    forward_auth localhost:8080 {
+{$TERMINAL_DOMAIN} {
+    forward_auth {$APP_HOST} {
         uri /auth/check/terminal
     }
 
-    reverse_proxy localhost:3001
+    reverse_proxy {$TERMINAL_HOST}
 }

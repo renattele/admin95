@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/error")
-public interface ErrorApi {
+public interface ErrorMvcApi {
     @RequestMapping
     String handleError(HttpServletRequest request);
 }

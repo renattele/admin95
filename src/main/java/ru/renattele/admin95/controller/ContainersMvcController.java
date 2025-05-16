@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import ru.renattele.admin95.api.ContainersApi;
+import ru.renattele.admin95.api.ContainersMvcApi;
 import ru.renattele.admin95.exception.ConflictException;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
 import ru.renattele.admin95.model.FileEntity;
@@ -18,7 +18,7 @@ import ru.renattele.admin95.service.docker.DockerProjectQueryService;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class ContainersController implements ContainersApi {
+public class ContainersMvcController implements ContainersMvcApi {
     private final FileRepository fileRepository;
     private final DockerLifecycleService dockerLifecycleService;
     private final DockerProjectManagementService dockerProjectManagementService;

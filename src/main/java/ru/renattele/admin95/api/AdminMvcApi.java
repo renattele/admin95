@@ -7,7 +7,7 @@ import ru.renattele.admin95.form.AdminForm;
 
 @RequestMapping("/admin/admins")
 @PreAuthorize("principal.username == @environment.getProperty('users.default')")
-public interface AdminApi {
+public interface AdminMvcApi {
     @GetMapping
     String admins(Model model);
 

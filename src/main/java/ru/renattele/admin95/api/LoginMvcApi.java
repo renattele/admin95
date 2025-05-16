@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Tag(name = "Authentication", description = "Authentication operations")
 @RequestMapping("/login")
-public interface LoginApi {
+public interface LoginMvcApi {
     
     /**
      * Displays the login page

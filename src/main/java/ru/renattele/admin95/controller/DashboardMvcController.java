@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import ru.renattele.admin95.api.DashboardApi;
+import ru.renattele.admin95.api.DashboardMvcApi;
 import ru.renattele.admin95.model.SystemMetricsEntity;
 import ru.renattele.admin95.service.ChartService;
 import ru.renattele.admin95.service.SystemMetricsService;
@@ -18,7 +18,7 @@ import java.util.function.ToDoubleFunction;
 
 @Controller
 @RequiredArgsConstructor
-public class DashboardController implements DashboardApi {
+public class DashboardMvcController implements DashboardMvcApi {
     private final SystemMetricsService systemMetricsService;
 
     private final ChartService chartService;

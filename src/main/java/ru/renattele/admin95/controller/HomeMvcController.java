@@ -2,13 +2,11 @@ package ru.renattele.admin95.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import ru.renattele.admin95.api.HomeApi;
+import ru.renattele.admin95.api.HomeMvcApi;
 
 @Controller
 @RequiredArgsConstructor
-public class HomeController implements HomeApi {
+public class HomeMvcController implements HomeMvcApi {
     @Override
     public String home() {
         return "index";

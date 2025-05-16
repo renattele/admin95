@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Tag(name = "Home", description = "Home page operations")
 @RequestMapping("/")
-public interface HomeApi {
+public interface HomeMvcApi {
     
     /**
      * Renders the home page

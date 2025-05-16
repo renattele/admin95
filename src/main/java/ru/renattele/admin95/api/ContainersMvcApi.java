@@ -21,7 +21,7 @@ import ru.renattele.admin95.validation.NameRegexPattern;
 @Tag(name = "Containers", description = "Container management operations")
 @RequestMapping("/admin/containers")
 @PreAuthorize("hasRole('ACCESS_CONTAINERS')")
-public interface ContainersApi {
+public interface ContainersMvcApi {
 
     /**
      * Display container dashboard

@@ -2,6 +2,11 @@ services:
   caddy:
     image: caddy
     restart: unless-stopped
+    environment:
+      APP_DOMAIN: localhost:8081
+      TERMINAL_DOMAIN: localhost:8082
+      TERMINAL_HOST: webssh:3000
+      APP_HOST: app:8080
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy:/var/www/html

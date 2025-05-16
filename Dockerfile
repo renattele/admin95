@@ -17,9 +17,10 @@ RUN --mount=type=cache,target=/root/.m2 \
 
 FROM openjdk:21-ea-21-slim-bullseye
 
-# Install Docker Compose and Docker CLI
-RUN apt update && \
-    apt install ca-certificates curl -y && \
+# Install Docker Compose, Docker CLI and RAR
+RUN sed -i -e's/ main/ main contrib non-free/g' /etc/apt/sources.list && \
+    apt update && \
+    apt install ca-certificates curl rar -y && \
     install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
     chmod a+r /etc/apt/keyrings/docker.asc && \
@@ -30,6 +31,7 @@ RUN apt update && \
     apt update && \
     apt install docker-ce-cli docker-compose-plugin -y
 
+RUN apt install rar
 
 WORKDIR /app
 

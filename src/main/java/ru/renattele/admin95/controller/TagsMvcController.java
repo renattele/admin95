@@ -1,8 +1,8 @@
 package ru.renattele.admin95.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import ru.renattele.admin95.api.TagsApi;
+import org.springframework.web.bind.annotation.RestController;
+import ru.renattele.admin95.api.TagsMvcApi;
 import ru.renattele.admin95.dto.DockerProjectDto;
 import ru.renattele.admin95.dto.TagDto;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-public class TagsController implements TagsApi {
+public class TagsMvcController implements TagsMvcApi {
     private final TagsService tagsService;
     private final DockerProjectQueryService dockerProjectQueryService;
 

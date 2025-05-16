@@ -1,7 +1,5 @@
-
-### Define variables
-@host = http://localhost:8080
-@auth_token=eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJpZCI6MSwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDczMDIyODcsImV4cCI6MTc0NzQ0NjI4N30.Hv09DuOY2nHZObVLSu0yjwmk1kHlrGybdeIZbM-yazY
+@username=admin
+@password=510f3ac3-dd08-4a95-870d-171acfe53e13
 
 ### Check Terminal Access
 GET {{host}}/api/auth/check/terminal
@@ -12,6 +10,6 @@ POST {{host}}/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "admin",
-  "password": "510f3ac3-dd08-4a95-870d-171acfe53e13"
+  "username": "{{username}}",
+  "password": "{{password}}"
 }

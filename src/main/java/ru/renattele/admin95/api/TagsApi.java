@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.renattele.admin95.dto.DockerProjectDto;
 import ru.renattele.admin95.dto.TagDto;
@@ -24,6 +25,7 @@ import java.util.Set;
  */
 @Tag(name = "Tags", description = "Tag management operations")
 @RequestMapping("/admin/tags")
+@PreAuthorize("hasRole('ROLE_ACCESS_CONTAINERS')")
 public interface TagsApi {
 
     /**

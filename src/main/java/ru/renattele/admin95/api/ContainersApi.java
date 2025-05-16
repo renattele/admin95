@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.renattele.admin95.validation.NameRegexPattern;
@@ -19,6 +20,7 @@ import ru.renattele.admin95.validation.NameRegexPattern;
  */
 @Tag(name = "Containers", description = "Container management operations")
 @RequestMapping("/admin/containers")
+@PreAuthorize("hasRole('ROLE_ACCESS_CONTAINERS')")
 public interface ContainersApi {
 
     /**

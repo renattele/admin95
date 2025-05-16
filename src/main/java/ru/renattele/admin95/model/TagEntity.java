@@ -1,6 +1,5 @@
 package ru.renattele.admin95.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.renattele.admin95.model.docker.DockerProjectEntity;
@@ -22,7 +21,7 @@ public class TagEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "tags")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<DockerProjectEntity> dockerProjects = new HashSet<>();

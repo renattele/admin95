@@ -62,7 +62,7 @@ public class SecurityConfig {
                                 .ignoringRequestMatchers("/api/**")
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").authenticated()
+                        .requestMatchers("/admin/**", "/").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(f -> f.loginPage("/login")

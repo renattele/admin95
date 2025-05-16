@@ -2,6 +2,7 @@ package ru.renattele.admin95.mapper.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.renattele.admin95.dto.DockerProjectDetailsDto;
 import ru.renattele.admin95.dto.DockerProjectDto;
 import ru.renattele.admin95.mapper.DockerProjectDetailsMapper;
@@ -20,6 +21,7 @@ public class DockerProjectMapperImpl implements DockerProjectMapper {
     private final TagMapper tagMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public DockerProjectDto toDto(DockerProjectEntity entity) {
         return DockerProjectDto.builder()
                 .id(entity.getId())

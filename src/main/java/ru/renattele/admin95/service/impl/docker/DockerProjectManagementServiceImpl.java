@@ -1,5 +1,6 @@
 package ru.renattele.admin95.service.impl.docker;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -124,6 +125,7 @@ public class DockerProjectManagementServiceImpl implements DockerProjectManageme
     }
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private static class DockerComposeLsResponse {
         @JsonProperty("Name")
         private String name;

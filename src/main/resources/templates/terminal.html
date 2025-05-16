@@ -9,7 +9,7 @@
     <h1>
         <th:block th:replace="~{fragments :: header_title('Terminal')}"></th:block>
     </h1>
-    <iframe th:src="@{/admin/wetty}"></iframe>
+    <iframe th:src="${terminalUrl}"></iframe>
 </main>
 <footer th:replace="~{fragments :: footer}"></footer>
 </body>

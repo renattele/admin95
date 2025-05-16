@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -55,6 +56,11 @@ public class ControllerAdvisor {
     public Object handleBindException(HttpServletRequest request, BindException e) {
         log.error(e.getMessage(), e);
         return handleException(request, HttpStatus.BAD_REQUEST, "Invalid request");
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public Object handleAuthorizationDeniedException(HttpServletRequest request, AuthorizationDeniedException e) {
+        return handleException(request, HttpStatus.FORBIDDEN, "Forbidden");
     }
 
     @ExceptionHandler(Exception.class)

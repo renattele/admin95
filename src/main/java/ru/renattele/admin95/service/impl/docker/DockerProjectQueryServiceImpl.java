@@ -2,6 +2,7 @@ package ru.renattele.admin95.service.impl.docker;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.renattele.admin95.dto.DockerProjectDetailsDto;
 import ru.renattele.admin95.dto.DockerProjectDto;
 import ru.renattele.admin95.mapper.DockerProjectDetailsMapper;
@@ -11,7 +12,6 @@ import ru.renattele.admin95.service.docker.DockerComposeExecutorService;
 import ru.renattele.admin95.service.docker.DockerProjectManagementService;
 import ru.renattele.admin95.service.docker.DockerProjectQueryService;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,6 +25,7 @@ public class DockerProjectQueryServiceImpl implements DockerProjectQueryService 
     private final DockerProjectDetailsMapper dockerProjectDetailsMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DockerProjectDto> getProjects() {
         var all = dockerProjectRepository.findAll();
 

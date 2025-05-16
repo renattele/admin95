@@ -10,7 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import ru.renattele.admin95.api.BackupApiApi;
+import ru.renattele.admin95.api.BackupApi;
 import ru.renattele.admin95.dto.BackupDto;
 import ru.renattele.admin95.exception.ResourceNotFoundException;
 import ru.renattele.admin95.form.BackupDeleteQueryForm;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class BackupApiController implements BackupApiApi {
+public class BackupApiController implements BackupApi {
     private final BackupService backupService;
     private final BackupDeleteQueryMapper backupDeleteQueryMapper;
 

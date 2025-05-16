@@ -14,10 +14,6 @@ public class AuthController implements AuthApi {
     private final AuthenticationService authenticationService;
 
     @Override
-    public void check() {
-    }
-
-    @Override
     public JwtAuthenticationResponse login(@Valid LoginRequest loginRequest) {
         return authenticationService.authenticate(loginRequest);
     }

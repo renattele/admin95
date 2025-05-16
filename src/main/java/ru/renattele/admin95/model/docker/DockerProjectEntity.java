@@ -35,10 +35,7 @@ public class DockerProjectEntity {
             .content("")
             .build();
 
-    @ManyToMany(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.REFRESH
-    )
+    @ManyToMany
     @JoinTable(
             name = "docker_project_tags",
             joinColumns = @JoinColumn(name = "docker_project_id"),

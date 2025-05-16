@@ -18,15 +18,6 @@ services:
     ports:
       - '5432:5432'
 
-  s3:
-    image: minio/minio
-    command: minio server /data
-    env_file: .sample.env
-    ports:
-      - "9000:9000"
-    volumes:
-      - s3:/data
-
   webssh:
     image: wettyoss/wetty
     ports:

@@ -22,27 +22,28 @@
 <header th:fragment="header">
     <a th:href="@{/}"><img width="300" th:src="@{/gifs/logo.gif}" alt="Burning Admin95 logo"></a>
     <nav>
-        <a th:href="@{/admin/dashboard}">
+        <a th:href="@{/admin/dashboard}" th:if="${#authorization.expression('hasRole(''ROLE_ACCESS_DASHBOARD'')')}">
             <img th:src="@{/gifs/chart.gif}" alt="Chart Image">
             <p>Dashboard</p>
         </a>
-        <a th:href="@{/admin/containers}">
+        <a th:href="@{/admin/containers}" th:if="${#authorization.expression('hasRole(''ROLE_ACCESS_CONTAINERS'')')}">
             <img th:src="@{/gifs/whale.gif}" alt="Whale Image">
             <p>Containers</p>
         </a>
-        <a th:href="@{/admin/terminal}">
+        <a th:href="@{/admin/terminal}" th:if="${#authorization.expression('hasRole(''ROLE_ACCESS_TERMINAL'')')}">
             <img th:src="@{/gifs/terminal.gif}" alt="Terminal Image">
             <p>Terminal</p>
         </a>
-        <a th:href="@{/admin/backups}">
+        <a th:href="@{/admin/backups}" th:if="${#authorization.expression('hasRole(''ROLE_ACCESS_BACKUPS'')')}">
             <img th:src="@{/gifs/zip.gif}" alt="Zip Image">
             <p>Backups</p>
         </a>
-        <a th:href="@{/admin/admins}">
+        <a th:href="@{/admin/admins}"
+           th:if="${#authorization.expression('authentication.name == @environment.getProperty(''users.default'')')}">
             <img th:src="@{/gifs/admin.gif}" alt="Hello Kitty Image">
             <p>Admins</p>
         </a>
-        <a href="#" id="dashboard-button-logout">
+        <a href="#" id="dashboard-button-logout" th:if="${#authorization.expression('isAuthenticated()')}">
             <img th:src="@{/gifs/logout.gif}" alt="Leave Image">
             <p>Logout</p>
         </a>

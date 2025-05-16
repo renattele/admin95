@@ -2,9 +2,8 @@
     reverse_proxy localhost:8080
 }
 :8082 {
-    # Authentication check for all requests
     forward_auth localhost:8080 {
-        uri /api/auth/check/terminal
+        uri /auth/check/terminal
     }
 
     reverse_proxy localhost:3001

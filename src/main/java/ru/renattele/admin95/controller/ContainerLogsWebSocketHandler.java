@@ -2,6 +2,7 @@ package ru.renattele.admin95.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 import ru.renattele.admin95.service.docker.DockerProjectQueryService;
@@ -13,7 +14,7 @@ import ru.renattele.admin95.util.RoomWebSocketHandler;
 public class ContainerLogsWebSocketHandler extends RoomWebSocketHandler {
     private final DockerProjectQueryService dockerProjectQueryService;
 
-    //@Scheduled(fixedRateString = "${docker.refresh-logs-interval}")
+    @Scheduled(fixedRateString = "${docker.refresh-logs-interval}")
     private void refreshLogs() {
         var projects = dockerProjectQueryService.getProjects();
         var rooms = getRooms();

@@ -9,12 +9,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const logoutButton = document.getElementById("dashboard-button-logout");
-            logoutButton.addEventListener('click', e => {
-                e.preventDefault();
-                serverFetch("/logout", {
-                    method: 'POST'
-                }).then(fetchHandler("Failed to logout"));
-            })
+            if (logoutButton !== null) {
+                logoutButton.addEventListener('click', e => {
+                    e.preventDefault();
+                    serverFetch("/logout", {
+                        method: 'POST'
+                    }).then(fetchHandler("Failed to logout"));
+                });
+            }
         });
     </script>
 </head>
@@ -60,7 +62,6 @@
         <img th:src="@{/gifs/badges/800x600_red.gif}" alt="800x600 Image">
         <img th:src="@{/gifs/badges/8bit.gif}" alt="8 bit Image">
         <img th:src="@{/gifs/badges/aol-sucks.gif}" alt="AOL Sucks Image">
-        <img th:src="@{/gifs/badges/bu12.gif}" alt="This website Image">
         <img th:src="@{/gifs/badges/cfs.gif}" alt="Completely free software Image">
     </p>
     <p>

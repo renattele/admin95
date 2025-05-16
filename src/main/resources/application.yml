@@ -21,7 +21,11 @@ spring:
     cache: false
   web:
     resources:
-      static-locations: file:src/main/resources/static/
+      static-locations: [ classpath:/static/,
+                          classpath:/public/,
+                          classpath:/resources/,
+                          classpath:/META-INF/resources/
+      ]
       cache:
         period: 0
   messages:

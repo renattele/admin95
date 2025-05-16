@@ -1,12 +1,18 @@
 services:
+  caddy:
+    image: caddy
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy:/var/www/html
   app:
     build: .
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/automania
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 12345678
+      DB_URL: jdbc:postgresql://db:5432/automania
+      DB_USERNAME: postgres
+      DB_PASSWORD: 12345678
     depends_on:
       - db
     volumes:
@@ -25,5 +31,5 @@ services:
     command: "--ssh-host=192.168.0.101 --allow-iframe=true --base=/admin/wetty"
 
 volumes:
-  s3:
   db:
+  caddy:

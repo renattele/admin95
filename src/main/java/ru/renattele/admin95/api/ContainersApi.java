@@ -20,7 +20,7 @@ import ru.renattele.admin95.validation.NameRegexPattern;
  */
 @Tag(name = "Containers", description = "Container management operations")
 @RequestMapping("/admin/containers")
-@PreAuthorize("hasRole('ROLE_ACCESS_CONTAINERS')")
+@PreAuthorize("hasRole('ACCESS_CONTAINERS')")
 public interface ContainersApi {
 
     /**

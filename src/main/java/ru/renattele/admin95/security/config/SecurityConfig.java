@@ -14,6 +14,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -63,11 +65,14 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**", "/").authenticated()
+                        .requestMatchers("/login").anonymous()
                         .anyRequest().permitAll()
                 )
                 .formLogin(f -> f.loginPage("/login")
-                        .defaultSuccessUrl("/admin")
-                        .failureUrl("/login?error")
+                        .defaultSuccessUrl("/")
+                        .failureHandler(new AuthenticationEntryPointFailureHandler(
+                                new Http403ForbiddenEntryPoint()
+                        ))
                         .permitAll()
                 )
                 .logout(logout -> logout

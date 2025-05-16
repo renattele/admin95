@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public interface AuthMvcApi {
     @GetMapping("/check/terminal")
-    @PreAuthorize("hasRole('ROLE_ACCESS_TERMINAL')")
+    @PreAuthorize("hasRole('ACCESS_TERMINAL')")
     ResponseEntity<String> check();
 }

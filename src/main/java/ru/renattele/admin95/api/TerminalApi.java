@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Tag(name = "Terminal", description = "Terminal operations")
 @RequestMapping("/admin/terminal")
-@PreAuthorize("hasRole('ROLE_ACCESS_TERMINAL')")
+@PreAuthorize("hasRole('ACCESS_TERMINAL')")
 public interface TerminalApi {
     
     /**

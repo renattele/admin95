@@ -18,7 +18,7 @@ import ru.renattele.admin95.form.BackupDeleteQueryForm;
 import java.util.List;
 
 @RequestMapping("/api/admin/backup")
-@PreAuthorize("hasRole('ROLE_ACCESS_BACKUPS')")
+@PreAuthorize("hasRole('ACCESS_BACKUPS')")
 @Tag(name = "Backup Management", description = "API for managing system backups")
 public interface BackupApi {
 

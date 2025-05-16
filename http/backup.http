@@ -1,5 +1,3 @@
-@host=http://localhost:8080
-@auth_token=eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJpZCI6MSwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDczMDIyODcsImV4cCI6MTc0NzQ0NjI4N30.Hv09DuOY2nHZObVLSu0yjwmk1kHlrGybdeIZbM-yazY
 @backup_id=1530
 @backup_name=backup_2025-05-15.rar
 

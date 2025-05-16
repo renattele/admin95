@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Tag(name = "Dashboard", description = "System metrics dashboard operations")
 @RequestMapping("/admin/dashboard")
-@PreAuthorize("hasRole('ROLE_ACCESS_DASHBOARD')")
+@PreAuthorize("hasRole('ACCESS_DASHBOARD')")
 public interface DashboardApi {
 
     /**

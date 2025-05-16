@@ -12,7 +12,7 @@ import ru.renattele.admin95.form.BackupDeleteQueryForm;
 
 @RequestMapping("/admin/backups")
 @Tag(name = "Backup Management", description = "Operations for managing system backups")
-@PreAuthorize("hasRole('ROLE_ACCESS_BACKUPS')")
+@PreAuthorize("hasRole('ACCESS_BACKUPS')")
 public interface BackupMvcApi {
     @GetMapping
     String backups(Model model);

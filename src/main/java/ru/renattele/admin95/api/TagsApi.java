@@ -25,7 +25,7 @@ import java.util.Set;
  */
 @Tag(name = "Tags", description = "Tag management operations")
 @RequestMapping("/admin/tags")
-@PreAuthorize("hasRole('ROLE_ACCESS_CONTAINERS')")
+@PreAuthorize("hasRole('ACCESS_CONTAINERS')")
 public interface TagsApi {
 
     /**

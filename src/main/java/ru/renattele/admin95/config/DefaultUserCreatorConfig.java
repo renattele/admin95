@@ -22,6 +22,9 @@ public class DefaultUserCreatorConfig {
     @Value("${users.default}")
     private String defaultUser;
 
+    @Value("${users.default-password}")
+    private String defaultPassword;
+
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         if (userService.getUserByName(defaultUser) == null) {
@@ -31,29 +34,8 @@ public class DefaultUserCreatorConfig {
 
     private void createUser() {
         var username = defaultUser;
-        var password = passwordGeneratorService.generatePassword();
-        userService.createUser(username, password,
+        userService.createUser(username, defaultPassword,
                 Arrays.stream(UserDto.Role.values()).toList(), true
         );
-        var message = generateMessage(username, password).lines();
-        message.forEach(log::warn);
-    }
-
-    private String generateMessage(String username, String password) {
-        return """
-                ******************************************************
-                
-                
-                
-                No Admin user found in database!
-                Default user created:
-                Username: %s
-                Password: %s
-                Please save it! It won't show again!
-                
-                
-                
-                ******************************************************
-                """.formatted(username, password);
     }
 }

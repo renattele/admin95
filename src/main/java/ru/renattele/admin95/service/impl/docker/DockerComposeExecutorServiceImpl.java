@@ -10,6 +10,7 @@ import ru.renattele.admin95.util.ProcessUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -23,9 +24,6 @@ public class DockerComposeExecutorServiceImpl implements DockerComposeExecutorSe
     ) throws IOException {
         projectsDir = new File(projectsPath);
         envFile = new File(envPath);
-        if (!envFile.exists() && !envFile.createNewFile()) {
-            throw new IllegalStateException("Cannot create .env file");
-        }
     }
 
 
@@ -47,13 +45,13 @@ public class DockerComposeExecutorServiceImpl implements DockerComposeExecutorSe
     @Override
     public ProcessBuilder execute(DockerProjectDto project, String... args) {
         var projectDir = new File(projectsDir, project.getName());
+        List<String> envFileArgs = envFile.exists() ? List.of("--env-file", envFile.getAbsolutePath()) : List.of();
         return ProcessUtil.builder(
-                        List.of("docker",
+                        Stream.concat(Stream.of("docker",
                                 "compose",
                                 "--project-directory",
-                                projectDir.getAbsolutePath(),
-                                "--env-file",
-                                envFile.getAbsolutePath()),
+                                projectDir.getAbsolutePath()
+                        ), envFileArgs.stream()).toList(),
                         args)
                 .redirectErrorStream(true);
     }

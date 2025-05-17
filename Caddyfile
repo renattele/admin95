@@ -14,6 +14,10 @@
         rewrite * /admin/wetty{uri}
     }
     handle {
-        reverse_proxy {$APP_HOST}
+        reverse_proxy {$APP_HOST} {
+            header_up X-Forwarded-Host {host}:{port}
+            header_up X-Forwarded-Port {port}
+            header_up X-Forwarded-Proto {scheme}
+        }
     }
 }

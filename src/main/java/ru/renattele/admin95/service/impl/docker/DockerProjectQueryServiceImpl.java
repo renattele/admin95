@@ -1,6 +1,7 @@
 package ru.renattele.admin95.service.impl.docker;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.renattele.admin95.dto.DockerProjectDetailsDto;
@@ -15,6 +16,7 @@ import ru.renattele.admin95.service.docker.DockerProjectQueryService;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DockerProjectQueryServiceImpl implements DockerProjectQueryService {
@@ -62,7 +64,13 @@ public class DockerProjectQueryServiceImpl implements DockerProjectQueryService 
     public String logsForProject(DockerProjectDto project) {
         var details = getProjectDetails(project);
         var entity = dockerProjectMapper.toEntity(project, details);
-        var logs = executor.getLogs(project);
+        String logs = null;
+        try {
+            logs = executor.getLogs(project).get();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return "";
+        }
         if (!logs.isEmpty() && details != null) {
             details.setLogs(logs);
         }

@@ -8,8 +8,8 @@ import ru.renattele.admin95.service.docker.DockerComposeExecutorService;
 import ru.renattele.admin95.util.ProcessUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -21,24 +21,24 @@ public class DockerComposeExecutorServiceImpl implements DockerComposeExecutorSe
     public DockerComposeExecutorServiceImpl(
             @Value("${docker.path}") String projectsPath,
             @Value("${docker.env-path}") String envPath
-    ) throws IOException {
+    ) {
         projectsDir = new File(projectsPath);
         envFile = new File(envPath);
     }
 
 
     @Override
-    public String getLogs(DockerProjectDto project) {
+    public CompletableFuture<String> getLogs(DockerProjectDto project) {
         return executeAndGetLogs(project, "logs", "--no-color");
     }
 
     @Override
-    public String up(DockerProjectDto project) {
+    public CompletableFuture<String> up(DockerProjectDto project) {
         return executeAndGetLogs(project, "up", "-d");
     }
 
     @Override
-    public String down(DockerProjectDto project) {
+    public CompletableFuture<String> down(DockerProjectDto project) {
         return executeAndGetLogs(project, "down");
     }
 
@@ -56,13 +56,15 @@ public class DockerComposeExecutorServiceImpl implements DockerComposeExecutorSe
                 .redirectErrorStream(true);
     }
 
-    private String executeAndGetLogs(DockerProjectDto project, String... args) {
+    private CompletableFuture<String> executeAndGetLogs(DockerProjectDto project, String... args) {
         var processBuilder = execute(project, args);
-        try {
-            return ProcessUtil.readInputStream(processBuilder.start());
-        } catch (Exception e) {
-            log.error("Cannot get logs for project: {}", project.getName(), e);
-            return "";
-        }
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return ProcessUtil.readInputStream(processBuilder.start());
+            } catch (Exception e) {
+                log.error("Cannot get logs for project: {}", project.getName(), e);
+                return "";
+            }
+        });
     }
 }

@@ -1,9 +1,19 @@
 {$APP_DOMAIN} {
-    handle /admin/wetty {
+    handle_path /admin/wetty {
         forward_auth {$APP_HOST} {
             uri /auth/check/terminal
         }
         reverse_proxy {$TERMINAL_HOST}
+        rewrite * /admin/wetty
     }
-    reverse_proxy {$APP_HOST}
+    handle_path /admin/wetty/* {
+        forward_auth {$APP_HOST} {
+            uri /auth/check/terminal
+        }
+        reverse_proxy {$TERMINAL_HOST}
+        rewrite * /admin/wetty{uri}
+    }
+    handle {
+        reverse_proxy {$APP_HOST}
+    }
 }

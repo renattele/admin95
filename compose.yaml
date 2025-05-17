@@ -11,10 +11,6 @@ services:
 
   app:
     image: renattele/admin95:latest
-    environment:
-      DB_URL: jdbc:postgresql://db:5432/automania
-      DB_USERNAME: postgres
-      DB_PASSWORD: 12345678
     depends_on:
       - db
     volumes:

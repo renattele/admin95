@@ -43,3 +43,6 @@ server:
   port: 8080
   error:
     path: /error
+  tomcat:
+    remoteip:
+      protocol-header: X-Forwarded-Proto

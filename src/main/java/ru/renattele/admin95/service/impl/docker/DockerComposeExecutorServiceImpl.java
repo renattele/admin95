@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.renattele.admin95.dto.DockerProjectDto;
-import ru.renattele.admin95.model.docker.DockerProjectEntity;
 import ru.renattele.admin95.service.docker.DockerComposeExecutorService;
 import ru.renattele.admin95.util.ProcessUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -20,9 +20,12 @@ public class DockerComposeExecutorServiceImpl implements DockerComposeExecutorSe
     public DockerComposeExecutorServiceImpl(
             @Value("${docker.path}") String projectsPath,
             @Value("${docker.env-path}") String envPath
-    ) {
+    ) throws IOException {
         projectsDir = new File(projectsPath);
         envFile = new File(envPath);
+        if (!envFile.exists() && !envFile.createNewFile()) {
+            throw new IllegalStateException("Cannot create .env file");
+        }
     }
 
 

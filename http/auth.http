@@ -1,9 +1,5 @@
 @username=admin
-@password=510f3ac3-dd08-4a95-870d-171acfe53e13
-
-### Check Terminal Access
-GET {{host}}/api/auth/check/terminal
-Authorization: Bearer {{auth_token}}
+@password=22443792-3cf0-413b-bf56-756390a4c3f8
 
 ### Login
 POST {{host}}/api/auth/login

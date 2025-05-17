@@ -26,8 +26,6 @@ spring:
                           classpath:/resources/,
                           classpath:/META-INF/resources/
       ]
-      cache:
-        period: 0
   messages:
     basename: messages/messages
   main:

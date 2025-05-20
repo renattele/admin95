@@ -11,15 +11,18 @@ import java.util.List;
 @NoArgsConstructor
 public class UserDto {
     private LocalDateTime createdAt;
+
     public enum State {
         OK, DISABLED
     }
+
     private Long id;
     private String name;
     private String password;
     private List<Role> roles;
     private State state;
     private LocalDateTime lastAccessedAt;
+
     @RequiredArgsConstructor
     @Getter
     public enum Role {

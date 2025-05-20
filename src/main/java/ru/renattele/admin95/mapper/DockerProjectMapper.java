@@ -6,5 +6,6 @@ import ru.renattele.admin95.model.docker.DockerProjectEntity;
 
 public interface DockerProjectMapper {
     DockerProjectDto toDto(DockerProjectEntity entity);
+
     DockerProjectEntity toEntity(DockerProjectDto dto, DockerProjectDetailsDto dtoDetails);
 }

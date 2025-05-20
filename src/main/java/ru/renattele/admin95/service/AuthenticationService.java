@@ -1,8 +1,8 @@
 package ru.renattele.admin95.service;
 
 import ru.renattele.admin95.dto.JwtAuthenticationResponse;
-import ru.renattele.admin95.dto.login.LoginRequest;
+import ru.renattele.admin95.dto.LoginRequestDto;
 
 public interface AuthenticationService {
-    JwtAuthenticationResponse authenticate(LoginRequest loginRequest);
+    JwtAuthenticationResponse authenticate(LoginRequestDto loginRequest);
 }

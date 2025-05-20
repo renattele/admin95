@@ -20,6 +20,9 @@ services:
 
   db:
     image: 'postgres:latest'
+    env_file: .sample.env
+    ports:
+      - 5432:5432
     volumes:
       - db:/var/lib/postgresql/data
 

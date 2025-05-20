@@ -5,5 +5,6 @@ import ru.renattele.admin95.model.SystemMetricsEntity;
 
 public interface SystemMetricsMapper {
     SystemMetricsDto toDto(SystemMetricsEntity entity);
+
     SystemMetricsEntity toEntity(SystemMetricsDto dto);
 }

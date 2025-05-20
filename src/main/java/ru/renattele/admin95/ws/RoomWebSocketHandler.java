@@ -1,4 +1,4 @@
-package ru.renattele.admin95.util;
+package ru.renattele.admin95.ws;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;

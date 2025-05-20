@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
-public class AdminsController implements AdminMvcApi {
+public class AdminsMvcController implements AdminMvcApi {
     private final UserService userService;
 
     @Override

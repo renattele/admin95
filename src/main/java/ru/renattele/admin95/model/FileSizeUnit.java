@@ -10,8 +10,8 @@ public enum FileSizeUnit {
     KILOBYTE(BYTE.multiplier * 1024, "file.size.unit.kilobyte"),
     MEGABYTE(KILOBYTE.multiplier * 1024, "file.size.unit.megabyte"),
     GIGABYTE(MEGABYTE.multiplier * 1024, "file.size.unit.gigabyte"),
-    TERABYTE(GIGABYTE.multiplier * 1024L, "file.size.unit.terabyte"),
-    ;
+    TERABYTE(GIGABYTE.multiplier * 1024L, "file.size.unit.terabyte");
+
     private final long multiplier;
     private final String messageKey;
 }

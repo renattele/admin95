@@ -1,4 +1,4 @@
-package ru.renattele.admin95.repository.impl;
+package ru.renattele.admin95.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
@@ -10,7 +10,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import ru.renattele.admin95.repository.QuickChartRepository;
 
 @Configuration
-public class RetrofitRepositoryImpl {
+public class RetrofitConfig {
     @Value("${dashboard.quickchart-base-url}")
     private String baseUrl;
 

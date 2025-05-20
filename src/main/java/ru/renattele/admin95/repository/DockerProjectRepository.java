@@ -1,4 +1,4 @@
-package ru.renattele.admin95.repository.docker;
+package ru.renattele.admin95.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.renattele.admin95.model.docker.DockerProjectEntity;

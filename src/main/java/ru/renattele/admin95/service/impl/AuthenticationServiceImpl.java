@@ -5,7 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import ru.renattele.admin95.dto.JwtAuthenticationResponse;
-import ru.renattele.admin95.dto.login.LoginRequest;
+import ru.renattele.admin95.dto.LoginRequestDto;
 import ru.renattele.admin95.service.AuthenticationService;
 import ru.renattele.admin95.service.JwtService;
 import ru.renattele.admin95.service.UserService;
@@ -18,7 +18,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public JwtAuthenticationResponse authenticate(LoginRequest loginRequest) {
+    public JwtAuthenticationResponse authenticate(LoginRequestDto loginRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),
                 loginRequest.getPassword()

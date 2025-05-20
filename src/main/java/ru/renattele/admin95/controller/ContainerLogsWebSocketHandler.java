@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 import ru.renattele.admin95.service.docker.DockerProjectQueryService;
-import ru.renattele.admin95.util.RoomWebSocketHandler;
+import ru.renattele.admin95.ws.RoomWebSocketHandler;
 
 @Slf4j
 @Component

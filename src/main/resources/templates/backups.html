@@ -31,6 +31,7 @@
         deleteBackupForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const formData = new FormData(deleteBackupForm);
+            formData.delete("_csrf");
             const body = JSON.stringify(formDataToJson(formData));
             console.log(body);
             const endpoint = '[(@{/admin/backups/delete-count-query})]';
